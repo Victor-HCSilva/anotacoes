@@ -1,0 +1,9 @@
+<h1>Vizualizar anotações</h1>
+
+<a class="nav-link" href="{% url 'main' id_user=user.id %}">Voltar</a>
+
+<br>
+{% for i in anotacoes %}
+    {{ i.titulo }}
+    <br>
+{% endfor %}

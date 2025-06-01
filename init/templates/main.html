@@ -1,0 +1,20 @@
+<h1>Bem vindo, {{ username }}</h1>
+
+<p>Listagem das anotações</p>
+
+{% for todo in todos %}
+    <p>{{ todo.titulo }}</p>
+    <a class="nav-link" href="{% url 'editar' id_user=user.id id_anotacao=todo.id %}">Editar</a>
+    <a class="nav-link" href="{% url 'remover' id_user=user.id id_anotacao=todo.id %}">Apagar</a>
+{% endfor %}
+
+<a class="nav-link" href="{% url 'anotacoes' id_user=user.id %}">Ver todas as anotações</a>
+
+<p>Adicione mais uma (ou não)</p>
+
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }} {# Ou as_ul, as_table #}
+    <button type="submit">Submit</button> {# Boa prática adicionar type="submit" #}
+</form>
