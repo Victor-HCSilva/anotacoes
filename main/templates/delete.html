@@ -1,6 +1,6 @@
-<h1>Deletar</h1>
-
+<h2>Tem certeza em apagar a terefa: {{ tarefa.titulo }}?</h2>
 <form method="POST">
     {% csrf_token %}
     <button>Apagar</button>
 </form>
+<a class="nav-link" href="{% url 'anotacoes' id_user=user.id %}">Cancelar</a>

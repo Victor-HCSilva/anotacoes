@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from .models import Todo
 
+
 def login_user(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -27,6 +28,7 @@ def login_user(request):
 def main(request, id_user: int):
     todos = Todo.objects.all()
     form = TodoForm(request.POST)
+    user = get_object_or_404(User, id=id_user)
 
     #Consertar com o login_required
     if request.user.id != id_user:
@@ -34,12 +36,13 @@ def main(request, id_user: int):
 
     if request.method == "POST":
         form = TodoForm(request.POST)
-        form.save()
+        todo = form.save(commit=False)
+        todo.user = user
+        todo.save()
         return redirect("main", id_user=id_user)
     else:
         print(form.errors)
 
-    user = get_object_or_404(User, id=id_user)
     context = {
         "username":user.username.title(),
         "todos":todos,

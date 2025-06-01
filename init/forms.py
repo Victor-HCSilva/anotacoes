@@ -5,13 +5,15 @@ from .models import (User, Todo)
 class TodoForm(ModelForm):
     class Meta:
         model = Todo
-        fields = "__all__"
+        fields = ["titulo","anotacao","prioridade","tag"]
         widgets = {
             "anotacao": Textarea(attrs={"cols": 80, "rows": 20}),
         }
         labels = {
             "anotacao": "Anotação",
         }
+
+
 class UserForm(ModelForm):
     class Meta:
         model = User

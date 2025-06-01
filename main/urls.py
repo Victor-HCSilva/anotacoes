@@ -15,4 +15,6 @@ urlpatterns = [
     path("anotacoes/<int:id_user>",
          views.anotacoes,name="anotacoes"),
 
+    path("show/<int:id_user>/<int:id_anotacao>",
+         views.show,name="show"),
 ]

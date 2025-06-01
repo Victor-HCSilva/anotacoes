@@ -1,0 +1,11 @@
+
+<a class="nav-link" href="{% url 'anotacoes' id_user=user.id %}">Voltar</a>
+<a class="nav-link" href="{% url 'main' id_user=user.id %}">Inserir nova tarefa</a>
+<a class="nav-link" href="{% url 'remover' id_user=user.id id_anotacao=tarefa.id %}">Deletar essa anotação</a>
+<a class="nav-link" href="{% url 'editar' id_user=user.id id_anotacao=tarefa.id %}">Corrigir essa anotação</a>
+
+<h1>Tarefa: {{ tarefa.titulo }}</h1>
+<h2>Prioridade: {{ tarefa.prioridade }}</h2>
+<p><strong>Anotação: </strong>{{ tarefa.anotacao }}</p>
+<p><strong>Data de criação: </strong>{{ tarefa.data_de_criacao }}</p>
+<p><strong>Data de tag: </strong>{{ tarefa.tag }}</p>

@@ -9,7 +9,6 @@ from init.forms import TodoForm
 
 @login_required
 def anotacoes(request, id_user):
-
     if request.user.id != id_user:
         return redirect('login')
 
@@ -21,6 +20,18 @@ def anotacoes(request, id_user):
         "anotacoes":todos,
     }
     return render(request, "anotacoes.html", context)
+
+
+def show(request, id_user,id_anotacao):
+    if request.user.id != id_user:
+        return redirect("login")
+    task = get_object_or_404(Todo, id=id_anotacao)
+    user = get_object_or_404(User, id=id_user)
+    context = {
+        "tarefa":task,
+        "user": user,
+    }
+    return render(request, "show.html", context)
 
 
 @login_required()
@@ -35,7 +46,9 @@ def editar(request, id_user, id_anotacao):
 
     if request.method == "POST":
         form = TodoForm(request.POST, instance=todo)
-        form.save()
+        todo = form.save(commit=False)
+        todo.user = user
+        todo.save()
         return redirect("main", id_user=id_user)
     else:
         print(form.errors)
@@ -63,5 +76,4 @@ def remover(request, id_user, id_anotacao):
         return redirect("main", id_user=id_user)
     else:
         print(form.errors)
-
-    return render (request, "delete.html")
+        return render (request, "delete.html", {"user":user, "tarefa":todo})
