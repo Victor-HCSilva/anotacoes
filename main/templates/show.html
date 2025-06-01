@@ -1,11 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
 
-<a class="nav-link" href="{% url 'anotacoes' id_user=user.id %}">Voltar</a>
-<a class="nav-link" href="{% url 'main' id_user=user.id %}">Inserir nova tarefa</a>
-<a class="nav-link" href="{% url 'remover' id_user=user.id id_anotacao=tarefa.id %}">Deletar essa anotação</a>
-<a class="nav-link" href="{% url 'editar' id_user=user.id id_anotacao=tarefa.id %}">Corrigir essa anotação</a>
+{% block title %}Detalhes: {{ tarefa.titulo|default:"Anotação" }} - {{ user.username|default:"Meu App" }}{% endblock title %}
 
-<h1>Tarefa: {{ tarefa.titulo }}</h1>
-<h2>Prioridade: {{ tarefa.prioridade }}</h2>
-<p><strong>Anotação: </strong>{{ tarefa.anotacao }}</p>
-<p><strong>Data de criação: </strong>{{ tarefa.data_de_criacao }}</p>
-<p><strong>Data de tag: </strong>{{ tarefa.tag }}</p>
+{% block extra_css %}
+<style>
+    .detail-box {
+        background-color: #2f2f2f; /* Um pouco mais claro que o fundo padrão do box */
+        border: 1px solid #4a4a4a;
+        border-radius: 6px;
+        padding: 1.5rem;
+    }
+    .detail-box .title, .detail-box .subtitle {
+        color: #e0e0e0;
+    }
+    .detail-box strong {
+        color: #b0b0b0;
+    }
+    .detail-box p {
+        color: #c0c0c0;
+        font-size: 1.1rem; /* Um pouco maior para leitura */
+        line-height: 1.7;
+    }
+    .actions-menu {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #4a4a4a;
+    }
+    .actions-menu .button {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem; /* Para empilhamento em mobile */
+    }
+
+    /* Estilos para as tags de prioridade (pode reutilizar do anotacoes_list.html se centralizado) */
+    .priority-tag {
+        font-weight: bold;
+        padding: 0.5em 1em;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 0.75rem;
+    }
+    .priority-alta { background-color: #f14668; color: white; }
+    .priority-media { background-color: #ffdd57; color: rgba(0,0,0,.7); }
+    .priority-baixa { background-color: #48c774; color: white; }
+    .priority-default { background-color: #7a7a7a; color: white; }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container">
+    <div class="columns is-centered">
+        <div class="column is-three-quarters-tablet is-two-thirds-desktop">
+
+            {# Menu de Ações Acima #}
+            <div class="buttons actions-menu is-centered-mobile">
+                <a class="button is-light" href="{% url 'anotacoes' id_user=user.id %}">
+                    <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                    <span>Voltar para Lista</span>
+                </a>
+                <a class="button is-info" href="{% url 'main' id_user=user.id %}"> {# Ou a URL de criar nova #}
+                    <span class="icon"><i class="fas fa-plus"></i></span>
+                    <span>Nova Anotação</span>
+                </a>
+                <a class="button is-warning" href="{% url 'editar' id_user=user.id id_anotacao=tarefa.id %}">
+                    <span class="icon"><i class="fas fa-edit"></i></span>
+                    <span>Corrigir</span>
+                </a>
+                <a class="button is-danger" href="{% url 'remover' id_user=user.id id_anotacao=tarefa.id %}" onclick="return confirm('Tem certeza que deseja deletar esta anotação? Esta ação não pode ser desfeita.');">
+                    <span class="icon"><i class="fas fa-trash"></i></span>
+                    <span>Deletar</span>
+                </a>
+            </div>
+
+            <div class="box detail-box has-background-black-bis"> {# Usando o box padrão do base ou o customizado `detail-box` #}
+                <h1 class="title is-2 has-text-primary is-capitalized">
+                    {{ tarefa.titulo }}
+                </h1>
+
+                {% if tarefa.prioridade %}
+                <div class="mb-4">
+                    <span class="subtitle is-6 has-text-grey mr-2">Prioridade:</span>
+                    <span class="tag
+                        {% if tarefa.prioridade|lower == 'alta' %}priority-alta
+                        {% elif tarefa.prioridade|lower == 'media' or tarefa.prioridade|lower == 'média' %}priority-media
+                        {% elif tarefa.prioridade|lower == 'baixa' %}priority-baixa
+                        {% else %}priority-default{% endif %}
+                        is-medium priority-tag">
+                        {{ tarefa.prioridade }}
+                    </span>
+                </div>
+                {% endif %}
+
+                <div class="content">
+                    <h2 class="subtitle is-5 has-text-info mt-4">Anotação:</h2>
+                    <div class="box has-background-dark has-text-light-grey p-4" style="white-space: pre-wrap; word-wrap: break-word;">
+                        {# 'white-space: pre-wrap' preserva quebras de linha e espaços #}
+                        {{ tarefa.anotacao|linebreaksbr }}
+                    </div>
+
+                    {% if tarefa.data_de_criacao %}
+                    <p class="mt-4">
+                        <strong class="has-text-grey">Criado em:</strong>
+                        <span class="has-text-grey-light">{{ tarefa.data_de_criacao }}</span>
+                    </p>
+                    {% endif %}
+
+                    {% if tarefa.tag %} {# Supondo que 'tag' seja um campo de texto ou similar #}
+                    <p class="mt-2">
+                        <strong class="has-text-grey">Tags:</strong>
+                        {% if tarefa.tag.all %} {# Se for um ManyToManyField #}
+                            {% for t in tarefa.tag.all %}
+                                <span class="tag is-info is-light mr-1">{{ t.nome }}</span> {# Supondo que o modelo Tag tenha um campo 'nome' #}
+                            {% endfor %}
+                        {% elif tarefa.tag %} {# Se for um CharField ou ForeignKey #}
+                             <span class="tag is-info is-light">{{ tarefa.tag }}</span>
+                        {% endif %}
+                    </p>
+                    {% endif %}
+
+                    {# Adicionar outros campos aqui se necessário #}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{# O script de fechar notificações (se houver) já está no base.html #}
+<script>
+    // Se precisar de JS específico para esta página, adicione aqui.
+    // Por exemplo, para o modal de confirmação de delete,
+    // o 'onclick' no link já faz o básico.
+    // Para um modal mais elegante, você usaria o componente modal do Bulma.
+</script>
+{% endblock extra_js %}
