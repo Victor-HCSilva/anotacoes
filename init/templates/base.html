@@ -77,7 +77,11 @@
                                 <a class="button is-primary" href="#"> <!-- Link para perfil ou dashboard -->
                                     <strong>Olá, {{ user.username }}</strong>
                                 </a>
-                                <a class="button is-light" href="#"> <!-- Link para logout -->
+                                <a class="" href="#"> <!-- Link para logout -->
+
+
+                            <a class="button is-light" href="{% url 'logout'%}">
+
                                     <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
                                     <span>Sair</span>
                                 </a>
@@ -128,7 +132,7 @@
     <footer class="footer has-background-black-ter">
         <div class="content has-text-centered has-text-grey-light">
             <p>
-                <strong>Par desorganizados como eu</strong> por <a href="#" class="has-text-primary">Victor Hugo | ❤️</a>.
+                <strong>Para desorganizados como eu|</strong> por <a href="#" class="has-text-primary">Victor Hugo ❤️|</a>.
                 O código fonte é licenciado <a href="http://opensource.org/licenses/mit-license.php" class="has-text-primary">MIT</a>.
             </p>
             <p>

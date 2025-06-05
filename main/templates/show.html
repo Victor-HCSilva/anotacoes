@@ -40,10 +40,19 @@
         display: inline-block;
         margin-bottom: 0.75rem;
     }
-    .priority-alta { background-color: #f14668; color: white; }
-    .priority-media { background-color: #ffdd57; color: rgba(0,0,0,.7); }
-    .priority-baixa { background-color: #48c774; color: white; }
-    .priority-default { background-color: #7a7a7a; color: white; }
+    .priority-alta { background-color: #f14668; color: white; } /* Vermelho para alta */
+    .priority-media { background-color: orange ; color: white !important; } /* Amarelo para média */
+    .priority-baixa { background-color: #48c774; color: white;} /* Verde para baixa */
+    .priority-default { background-color: #7a7a7a; color: red !importante; } /* Cinza para outras */
+    .priority-baixa, .priority-media, .priority-alta, .priority-default{
+        padding: 5px;
+        border: 1px solid white;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+     .priority-baixa:hover, .priority-media: hover, .priority-alta: hover, .priority-default: hover{
+        color: black;
+   }
 </style>
 {% endblock extra_css %}
 
@@ -80,10 +89,10 @@
                 {% if tarefa.prioridade %}
                 <div class="mb-4">
                     <span class="subtitle is-6 has-text-grey mr-2">Prioridade:</span>
-                    <span class="tag
-                        {% if tarefa.prioridade|lower == 'alta' %}priority-alta
-                        {% elif tarefa.prioridade|lower == 'media' or tarefa.prioridade|lower == 'média' %}priority-media
-                        {% elif tarefa.prioridade|lower == 'baixa' %}priority-baixa
+                    <span class="
+                        {% if tarefa.prioridade|lower == 'máxima' %}priority-alta
+                        {% elif tarefa.prioridade|lower == 'mediana' or tarefa.prioridade|lower == 'média' %}priority-media
+                        {% elif tarefa.prioridade|lower == 'mínima' %}priority-baixa
                         {% else %}priority-default{% endif %}
                         is-medium priority-tag">
                         {{ tarefa.prioridade }}
@@ -93,7 +102,7 @@
 
                 <div class="content">
                     <h2 class="subtitle is-5 has-text-info mt-4">Anotação:</h2>
-                    <div class="box has-background-dark has-text-light-grey p-4" style="white-space: pre-wrap; word-wrap: break-word;">
+                    <div class="box has-background-dark has-text-light-grey p-4" style="white-space: pre-wrap; word-wrap: break-word; color: white;">
                         {# 'white-space: pre-wrap' preserva quebras de linha e espaços #}
                         {{ tarefa.anotacao|linebreaksbr }}
                     </div>

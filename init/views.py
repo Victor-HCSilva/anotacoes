@@ -39,7 +39,7 @@ def main(request, id_user: int):
         todo = form.save(commit=False)
         todo.user = user
         todo.save()
-        return redirect("main", id_user=id_user)
+        return redirect("anotacoes", id_user=id_user)
     else:
         print(form.errors)
 
@@ -49,3 +49,6 @@ def main(request, id_user: int):
         "form":form,
     }
     return render(request, "main.html",context)
+
+def logout(request):
+    return redirect("login")

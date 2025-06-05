@@ -49,7 +49,7 @@ def editar(request, id_user, id_anotacao):
         todo = form.save(commit=False)
         todo.user = user
         todo.save()
-        return redirect("main", id_user=id_user)
+        return redirect("anotacoes", id_user=id_user)
     else:
         print(form.errors)
 
@@ -73,7 +73,7 @@ def remover(request, id_user, id_anotacao):
 
     if request.method == "POST":
         todo.delete()
-        return redirect("main", id_user=id_user)
+        return redirect("anotacoes", id_user=id_user)
     else:
         print(form.errors)
         return render (request, "delete.html", {"user":user, "tarefa":todo})

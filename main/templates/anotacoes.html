@@ -28,15 +28,25 @@
         font-weight: bold;
     }
     .priority-alta { background-color: #f14668; color: white; } /* Vermelho para alta */
-    .priority-media { background-color: #ffdd57; color: rgba(0,0,0,.7); } /* Amarelo para média */
-    .priority-baixa { background-color: #48c774; color: white; } /* Verde para baixa */
-    .priority-default { background-color: #7a7a7a; color: white; } /* Cinza para outras */
+    .priority-media { background-color: orange ; color: white !important; } /* Amarelo para média */
+    .priority-baixa { background-color: #48c774; color: white;} /* Verde para baixa */
+    .priority-default { background-color: #7a7a7a; color: red !importante; } /* Cinza para outras */
+    .priority-baixa, .priority-media, .priority-alta, .priority-default{
+        padding: 5px;
+        border: 1px solid white;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+     .priority-baixa:hover, .priority-media: hover, .priority-alta: hover, .priority-default: hover{
+        color: black;
+   }
+
 
 </style>
 {% endblock extra_css %}
 
 {% block content %}
-<div class="container"> {/* Ou use 'columns is-centered' se quiser limitar a largura */}
+<div class="container">
 
     <div class="level mb-5">
         <div class="level-left">
@@ -68,10 +78,10 @@
                             </p>
                             {% if anotacao_item.prioridade %}
                                 <span class="card-header-icon">
-                                    <span class="tag
-                                        {% if anotacao_item.prioridade|lower == 'alta' %}priority-alta
-                                        {% elif anotacao_item.prioridade|lower == 'media' or anotacao_item.prioridade|lower == 'média' %}priority-media
-                                        {% elif anotacao_item.prioridade|lower == 'baixa' %}priority-baixa
+                                    <span class="
+                                        {% if anotacao_item.prioridade|lower == 'mínima' %}priority-baixa
+                                        {% elif anotacao_item.prioridade|lower == 'mediana' %}priority-media
+                                        {% elif anotacao_item.prioridade|lower == 'máxima' %}priority-alta
                                         {% else %}priority-default{% endif %}
                                         is-medium priority-tag">
                                         {{ anotacao_item.prioridade }}
@@ -95,11 +105,9 @@
                                 <span class="icon is-small mr-1"><i class="fas fa-edit"></i></span>
                                 Editar
                             </a>
-                            {# Você pode adicionar mais ações aqui, como 'Apagar' #}
-                            {# <a href="{% url 'remover' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item has-text-danger">
-                                <span class="icon is-small mr-1"><i class="fas fa-trash"></i></span>
-                                Apagar
-                            </a> #}
+                            <a class="button is-danger is-outlined" href="{% url 'remover' id_user=user.id id_anotacao=anotacao_item.id %}">
+                                <span class="icon"><i class="fas fa-trash"></i></span>
+                            </a>
                         </footer>
                     </div>
                 </div>
@@ -113,7 +121,7 @@
                 Você ainda não tem nenhuma anotação cadastrada.
             </p>
             <div class="has-text-centered mt-4">
-                <a class="button is-primary" href="{% url 'main' id_user=user.id %}"> {/* Substitua 'main' pelo nome correto da sua URL de criar/home */}
+                <a class="button is-primary" href="{% url 'main' id_user=user.id %}">
                     <span class="icon"><i class="fas fa-plus"></i></span>
                     <span>Criar Primeira Anotação</span>
                 </a>
