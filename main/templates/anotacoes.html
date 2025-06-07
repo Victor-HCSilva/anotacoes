@@ -73,9 +73,21 @@
                 <div class="column is-one-third-desktop is-half-tablet">
                     <div class="card card-anotacao">
                         <header class="card-header">
-                            <p class="card-header-title is-capitalized">
-                                {{ anotacao_item.titulo|truncatewords:7 }}
+                    <p class="card-header-title ">
+                        {{ anotacao_item.titulo|truncatewords:7 }}
+
                             </p>
+
+                    <p class="card-header-title" style="color: {{ anotacao_item.color  }}">
+                        <strong style="color: gray; padding:5px;">
+
+                        {{anotacao_item.message}}
+                        </strong>
+                        {{ anotacao_item.prazo  }}
+                    </p>
+
+
+
                             {% if anotacao_item.prioridade %}
                                 <span class="card-header-icon">
                                     <span class="

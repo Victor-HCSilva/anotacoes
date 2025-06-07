@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from init.forms import TodoForm, ImageForm
-
+from . import utils
 
 @login_required
 def anotacoes(request, id_user):
@@ -13,9 +13,35 @@ def anotacoes(request, id_user):
         return redirect('login')
 
     todos = Todo.objects.all()
+    prazos = {}
+
+    for tarefa in todos:
+
+        #Atribuição de dias restantes
+        if tarefa.prazo_inicial and tarefa.prazo_final:
+            tarefa.prazo = utils.get_time_diff_days(tarefa.prazo_inicial, tarefa.prazo_final)
+        else:
+            tarefa.prazo = "Sem prazo definido"
+
+        #Mensagens
+        if int(tarefa.prazo) <=0:
+            tarefa.message = "Passou do prazo: "
+        else:
+            tarefa.message = "Dias restantes: "
+
+        #Cores das menssagens
+        if int(tarefa.prazo) >= 7:
+            tarefa.color = "green"
+        elif int(tarefa.prazo) >= 3 and int(tarefa.prazo) < 7:
+            tarefa.color = "orange"
+        elif int(tarefa.prazo) >= 1 and int(tarefa.prazo) <=2:
+            tarefa.color = "red"
+        else:
+            tarefa.color = "violet"
 
     context = {
         "anotacoes":todos,
+        "prazos":prazos,
     }
 
     return render(request, "anotacoes.html", context)

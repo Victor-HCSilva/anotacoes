@@ -94,7 +94,7 @@
             {% for todo in todos %}
                 <article class="message is-dark mb-3"> {# Usando o componente 'message' do Bulma #}
                     <div class="message-header">
-                        <p>{{ todo.titulo|truncatewords:10 }}</p>
+                    <p>{{ todo.titulo|truncatewords:10}}</p>
                         <div class="buttons are-small">
                             <a class="button is-info is-outlined" href="{% url 'show' id_user=user.id id_anotacao=todo.id %}">
                                 <span class="icon"><i class="fas fa-eye"></i></span>
