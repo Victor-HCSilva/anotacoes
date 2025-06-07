@@ -17,4 +17,10 @@ urlpatterns = [
 
     path("show/<int:id_user>/<int:id_anotacao>",
          views.show,name="show"),
+
+    path("apagar_imagem/<int:id_user>/<int:id_anotacao>/<int:id_imagem>",
+         views.apagar_imagem,name="apagar_imagem"),
+
+    path("editar_descricao/<int:id_user>/<int:id_anotacao>/<int:id_imagem>",
+         views.editar_descricao,name="editar_descricao"),
 ]

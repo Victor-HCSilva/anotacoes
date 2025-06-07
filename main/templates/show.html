@@ -5,54 +5,22 @@
 
 {% block extra_css %}
 <style>
-    .detail-box {
-        background-color: #2f2f2f; /* Um pouco mais claro que o fundo padrão do box */
-        border: 1px solid #4a4a4a;
-        border-radius: 6px;
-        padding: 1.5rem;
-    }
-    .detail-box .title, .detail-box .subtitle {
-        color: #e0e0e0;
-    }
-    .detail-box strong {
-        color: #b0b0b0;
-    }
-    .detail-box p {
-        color: #c0c0c0;
-        font-size: 1.1rem; /* Um pouco maior para leitura */
-        line-height: 1.7;
-    }
-    .actions-menu {
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #4a4a4a;
-    }
-    .actions-menu .button {
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem; /* Para empilhamento em mobile */
-    }
-
-    /* Estilos para as tags de prioridade (pode reutilizar do anotacoes_list.html se centralizado) */
-    .priority-tag {
-        font-weight: bold;
-        padding: 0.5em 1em;
-        border-radius: 4px;
-        display: inline-block;
-        margin-bottom: 0.75rem;
-    }
-    .priority-alta { background-color: #f14668; color: white; } /* Vermelho para alta */
-    .priority-media { background-color: orange ; color: white !important; } /* Amarelo para média */
-    .priority-baixa { background-color: #48c774; color: white;} /* Verde para baixa */
-    .priority-default { background-color: #7a7a7a; color: red !importante; } /* Cinza para outras */
-    .priority-baixa, .priority-media, .priority-alta, .priority-default{
-        padding: 5px;
-        border: 1px solid white;
-        border-radius: 10px;
-        cursor: pointer;
-    }
-     .priority-baixa:hover, .priority-media: hover, .priority-alta: hover, .priority-default: hover{
-        color: black;
-   }
+    /* Seus estilos CSS permanecem os mesmos, eles estão ótimos! */
+    .detail-box { background-color: #2f2f2f; border: 1px solid #4a4a4a; border-radius: 6px; padding: 1.5rem; }
+    .detail-box .title, .detail-box .subtitle { color: #e0e0e0; }
+    .detail-box strong { color: #b0b0b0; }
+    .detail-box p { color: #c0c0c0; font-size: 1.1rem; line-height: 1.7; }
+    .actions-menu { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #4a4a4a; }
+    .actions-menu .button { margin-right: 0.5rem; margin-bottom: 0.5rem; }
+    .priority-tag { font-weight: bold; padding: 0.5em 1em; border-radius: 4px; display: inline-block; margin-bottom: 0.75rem; }
+    .priority-alta { background-color: #f14668; color: white; }
+    .priority-media { background-color: orange ; color: white !important; }
+    .priority-baixa { background-color: #48c774; color: white; }
+    .priority-default { background-color: #7a7a7a; color: white; }
+    .priority-baixa, .priority-media, .priority-alta, .priority-default { padding: 5px; border: 1px solid white; border-radius: 10px; cursor: pointer; }
+    .priority-baixa:hover, .priority-media:hover, .priority-alta:hover { color: black; }
+    .image-box { margin-bottom: 1.5rem; }
+    .file-label { width: 100%; }
 </style>
 {% endblock extra_css %}
 
@@ -60,41 +28,33 @@
 <div class="container">
     <div class="columns is-centered">
         <div class="column is-three-quarters-tablet is-two-thirds-desktop">
+            <p id="topo"></p>
+
+            {# --- NOVO: Bloco para exibir mensagens de sucesso/erro --- #}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="notification is-{{ message.tags }} is-light">
+                        <button class="delete"></button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
 
             {# Menu de Ações Acima #}
             <div class="buttons actions-menu is-centered-mobile">
-                <a class="button is-light" href="{% url 'anotacoes' id_user=user.id %}">
-                    <span class="icon"><i class="fas fa-arrow-left"></i></span>
-                    <span>Voltar para Lista</span>
-                </a>
-                <a class="button is-info" href="{% url 'main' id_user=user.id %}"> {# Ou a URL de criar nova #}
-                    <span class="icon"><i class="fas fa-plus"></i></span>
-                    <span>Nova Anotação</span>
-                </a>
-                <a class="button is-warning" href="{% url 'editar' id_user=user.id id_anotacao=tarefa.id %}">
-                    <span class="icon"><i class="fas fa-edit"></i></span>
-                    <span>Corrigir</span>
-                </a>
-                <a class="button is-danger" href="{% url 'remover' id_user=user.id id_anotacao=tarefa.id %}" onclick="return confirm('Tem certeza que deseja deletar esta anotação? Esta ação não pode ser desfeita.');">
-                    <span class="icon"><i class="fas fa-trash"></i></span>
-                    <span>Deletar</span>
-                </a>
+                <a class="button is-light" href="{% url 'anotacoes' id_user=user.id %}"><span class="icon"><i class="fas fa-arrow-left"></i></span><span>Voltar</span></a>
+                <a class="button is-info" href="{% url 'main' id_user=user.id %}"><span class="icon"><i class="fas fa-plus"></i></span><span>Nova</span></a>
+                <a class="button is-warning" href="{% url 'editar' id_user=user.id id_anotacao=tarefa.id %}"><span class="icon"><i class="fas fa-edit"></i></span><span>Corrigir</span></a>
+                <a class="button is-danger" href="{% url 'remover' id_user=user.id id_anotacao=tarefa.id %}" onclick="return confirm('Tem certeza?');"><span class="icon"><i class="fas fa-trash"></i></span><span>Deletar</span></a>
             </div>
 
-            <div class="box detail-box has-background-black-bis"> {# Usando o box padrão do base ou o customizado `detail-box` #}
-                <h1 class="title is-2 has-text-primary is-capitalized">
-                    {{ tarefa.titulo }}
-                </h1>
+            <div class="box detail-box has-background-black-bis">
+                <h1 class="title is-2 has-text-primary is-capitalized">{{ tarefa.titulo }}</h1>
 
                 {% if tarefa.prioridade %}
                 <div class="mb-4">
                     <span class="subtitle is-6 has-text-grey mr-2">Prioridade:</span>
-                    <span class="
-                        {% if tarefa.prioridade|lower == 'máxima' %}priority-alta
-                        {% elif tarefa.prioridade|lower == 'mediana' or tarefa.prioridade|lower == 'média' %}priority-media
-                        {% elif tarefa.prioridade|lower == 'mínima' %}priority-baixa
-                        {% else %}priority-default{% endif %}
-                        is-medium priority-tag">
+                    <span class="priority-tag {% if tarefa.prioridade|lower == 'máxima' %}priority-alta{% elif tarefa.prioridade|lower == 'mediana' or tarefa.prioridade|lower == 'média' %}priority-media{% elif tarefa.prioridade|lower == 'mínima' %}priority-baixa{% else %}priority-default{% endif %}">
                         {{ tarefa.prioridade }}
                     </span>
                 </div>
@@ -103,32 +63,87 @@
                 <div class="content">
                     <h2 class="subtitle is-5 has-text-info mt-4">Anotação:</h2>
                     <div class="box has-background-dark has-text-light-grey p-4" style="white-space: pre-wrap; word-wrap: break-word; color: white;">
-                        {# 'white-space: pre-wrap' preserva quebras de linha e espaços #}
                         {{ tarefa.anotacao|linebreaksbr }}
                     </div>
-
-                    {% if tarefa.data_de_criacao %}
-                    <p class="mt-4">
-                        <strong class="has-text-grey">Criado em:</strong>
-                        <span class="has-text-grey-light">{{ tarefa.data_de_criacao }}</span>
-                    </p>
-                    {% endif %}
-
-                    {% if tarefa.tag %} {# Supondo que 'tag' seja um campo de texto ou similar #}
-                    <p class="mt-2">
-                        <strong class="has-text-grey">Tags:</strong>
-                        {% if tarefa.tag.all %} {# Se for um ManyToManyField #}
-                            {% for t in tarefa.tag.all %}
-                                <span class="tag is-info is-light mr-1">{{ t.nome }}</span> {# Supondo que o modelo Tag tenha um campo 'nome' #}
-                            {% endfor %}
-                        {% elif tarefa.tag %} {# Se for um CharField ou ForeignKey #}
-                             <span class="tag is-info is-light">{{ tarefa.tag }}</span>
-                        {% endif %}
-                    </p>
-                    {% endif %}
-
-                    {# Adicionar outros campos aqui se necessário #}
+                    {% if tarefa.data_de_criacao %}<p class="mt-4"><strong class="has-text-grey">Criado em:</strong> <span class="has-text-grey-light">{{ tarefa.data_de_criacao }}</span></p>{% endif %}
                 </div>
+            </div>
+
+            {# --- SEÇÃO DE IMAGENS ASSOCIADAS (MELHORADA) --- #}
+            <div class="box has-background-black-bis mt-5">
+                <h2 class="title is-4 has-text-light">Imagens Associadas</h2>
+                <hr class="has-background-grey-darker">
+                {% for img in imagens %}
+                    <div class="box has-background-dark image-box">
+                        <div class="level">
+                            <div class="level-left">
+                                <h4 class="title is-5 has-text-light">{{ img.titulo|default:"Imagem sem título" }}</h4>
+                            </div>
+                            <div class="level-right">
+                                <div class="buttons are-small">
+                                    <a class="button is-light is-outlined" href="{% url 'editar_descricao' id_user=user.id id_imagem=img.id id_anotacao=tarefa.id %}">
+                                        <span class="icon"><i class="fas fa-pen"></i></span>
+                                    </a>
+                                    <a class="button is-danger is-outlined" href="{% url 'apagar_imagem' id_user=user.id id_imagem=img.id id_anotacao=tarefa.id %}" onclick="return confirm('Apagar esta imagem?');">
+                                        <span class="icon"><i class="fas fa-times"></i></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% if img.observacao %}<p class="subtitle is-6 has-text-grey-light mb-4">{{ img.observacao }}</p>{% endif %}
+                        <figure class="image is-16by9">
+                            <img src="{{ img.img.url }}" alt="{{ img.observacao }}" title="{{ img.titulo }}">
+                        </figure>
+                    </div>
+                {% empty %}
+                    <p class="has-text-grey-light">Nenhuma imagem foi adicionada a esta anotação ainda.</p>
+                {% endfor %}
+            </div>
+
+            {# --- FORMULÁRIO PARA ADICIONAR NOVAS IMAGENS (MELHORADO) --- #}
+            <div class="box has-background-black-bis mt-5" id="adicionar_imagem">
+                <h2 class="title is-4 has-text-light">Adicionar Nova Imagem</h2>
+                <hr class="has-background-grey-darker">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {# Título #}
+                    <div class="field">
+                        <label class="label">{{ form.titulo.label }}</label>
+                        <div class="control">{{ form.titulo }}</div>
+                        {% for error in form.titulo.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    {# Observação #}
+                    <div class="field">
+                        <label class="label">{{ form.observacao.label }}</label>
+                        <div class="control">{{ form.observacao }}</div>
+                        {% for error in form.observacao.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    {# Upload do Arquivo (com estilo Bulma) #}
+                    <div class="field">
+                        <label class="label">{{ form.img.label }}</label>
+                        <div class="control">
+                           <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    {{ form.img }}
+                                    <span class="file-cta">
+                                        <span class="file-icon"><i class="fas fa-upload"></i></span>
+                                        <span class="file-label">Escolher arquivo…</span>
+                                    </span>
+                                    <span class="file-name">Nenhum arquivo selecionado</span>
+                                </label>
+                            </div>
+                        </div>
+                        {% for error in form.img.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    <div class="field is-grouped is-grouped-right mt-5">
+                        <div class="control"><a href="#topo" class="button is-light">Topo</a></div>
+                        <div class="control"><button type="submit" class="button is-success">Salvar Imagem</button></div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -136,11 +151,24 @@
 {% endblock content %}
 
 {% block extra_js %}
-{# O script de fechar notificações (se houver) já está no base.html #}
 <script>
-    // Se precisar de JS específico para esta página, adicione aqui.
-    // Por exemplo, para o modal de confirmação de delete,
-    // o 'onclick' no link já faz o básico.
-    // Para um modal mais elegante, você usaria o componente modal do Bulma.
+document.addEventListener('DOMContentLoaded', () => {
+    // Para fechar notificações
+    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+        const $notification = $delete.parentNode;
+        $delete.addEventListener('click', () => { $notification.parentNode.removeChild($notification); });
+    });
+
+    // Para mostrar o nome do arquivo no input de upload do Bulma
+    const fileInput = document.querySelector('.file-input');
+    if (fileInput) {
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+                const fileName = document.querySelector('.file-name');
+                fileName.textContent = fileInput.files[0].name;
+            }
+        };
+    }
+});
 </script>
 {% endblock extra_js %}

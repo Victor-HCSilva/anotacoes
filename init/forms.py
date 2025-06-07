@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Textarea
-from .models import (User, Todo)
+from .models import (User, Todo, Image)
 from django import forms
 
 class TodoForm(ModelForm):
@@ -40,4 +40,16 @@ class UserForm(ModelForm):
         labels = {
             "username": "Nome:",
             "password":"Senha:"
+        }
+
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        # Inclua os campos do seu modelo Image que o usuário deve preencher
+        fields = ['titulo', 'observacao', 'img']
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Título da imagem'}),
+            'observacao': forms.Textarea(attrs={'class': 'textarea', 'placeholder': 'Alguma observação sobre a imagem...', 'rows': 3}),
+            'img': forms.ClearableFileInput(attrs={'class': 'file-input'}),
         }
