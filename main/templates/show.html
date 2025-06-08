@@ -49,9 +49,17 @@
             </div>
 
             <div class="box detail-box has-background-black-bis">
-                <h1 class="title is-2 has-text-primary is-capitalized">{{ tarefa.titulo }}</h1>
+                <h1 class="title is-2 has-text-primary is-capitalized">
 
+                    {{ tarefa.titulo }}
                 {% if tarefa.prioridade %}
+                    {% if tarefa.completo %}
+                        ✅
+                    {% else %}
+                        ⌛
+                    {% endif %}
+                </h1>
+
                 <div class="mb-4">
                     <span class="subtitle is-6 has-text-grey mr-2">Prioridade:</span>
                     <span class="priority-tag {% if tarefa.prioridade|lower == 'máxima' %}priority-alta{% elif tarefa.prioridade|lower == 'mediana' or tarefa.prioridade|lower == 'média' %}priority-media{% elif tarefa.prioridade|lower == 'mínima' %}priority-baixa{% else %}priority-default{% endif %}">

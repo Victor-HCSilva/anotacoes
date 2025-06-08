@@ -29,6 +29,14 @@ class Todo(models.Model):
         max_length=200
     )
 
+    favorito = models.BooleanField(
+        default=False
+    )
+
+    completo = models.BooleanField(
+        default=False
+    )
+
     anotacao = models.CharField(
         max_length=50000
     )

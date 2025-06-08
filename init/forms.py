@@ -5,7 +5,7 @@ from django import forms
 class TodoForm(ModelForm):
     class Meta:
         model = Todo
-        fields = ["titulo","anotacao","prioridade","tag","prazo_inicial", "prazo_final"]
+        fields = ["titulo","anotacao","prioridade","tag","prazo_inicial", "prazo_final", "completo", "favorito"]
         widgets = {
             "anotacao": Textarea(attrs={"cols": 80, "rows": 20}),
 

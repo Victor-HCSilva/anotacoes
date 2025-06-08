@@ -74,16 +74,31 @@
                     <div class="card card-anotacao">
                         <header class="card-header">
                     <p class="card-header-title ">
+
+
+
+                    {% if anotacao_item.favorito %}
+                        ⭐
+                    {% else %}
+                        ✏️
+                    {% endif %}
+
                         {{ anotacao_item.titulo|truncatewords:7 }}
 
                             </p>
 
                     <p class="card-header-title" style="color: {{ anotacao_item.color  }}">
+
+                        {% if not anotacao_item.completo %}
                         <strong style="color: gray; padding:5px;">
 
                         {{anotacao_item.message}}
                         </strong>
                         {{ anotacao_item.prazo  }}
+
+                        {% else %}
+                        Concluído
+                        {% endif %}
                     </p>
 
 

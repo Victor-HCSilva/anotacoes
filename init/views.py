@@ -26,7 +26,7 @@ def login_user(request):
 
 @login_required()
 def main(request, id_user: int):
-    todos = Todo.objects.all()
+    todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
     form = TodoForm(request.POST)
     user = get_object_or_404(User, id=id_user)
 

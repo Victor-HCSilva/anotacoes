@@ -12,7 +12,7 @@ def anotacoes(request, id_user):
     if request.user.id != id_user:
         return redirect('login')
 
-    todos = Todo.objects.all()
+    todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
     prazos = {}
 
     for tarefa in todos:
@@ -24,7 +24,7 @@ def anotacoes(request, id_user):
             tarefa.prazo = "Sem prazo definido"
 
         #Mensagens
-        if int(tarefa.prazo) <=0:
+        if int(tarefa.prazo) <0:
             tarefa.message = "Passou do prazo: "
         else:
             tarefa.message = "Dias restantes: "
@@ -97,6 +97,8 @@ def editar(request, id_user, id_anotacao):
     context = {
         "user":user,
         "form":form,
+        "tarefa":todo
+
     }
     return render (request, "editar.html", context)
 
@@ -114,7 +116,7 @@ def remover(request, id_user, id_anotacao):
 
     if request.method == "POST":
         todo.delete()
-        return redirect("anotacoes", id_user=id_user)
+        return redirect("show", id_user=id_user , id_anotacao=id_anotacao)
     else:
         print(form.errors)
         return render (request, "delete.html", {"user":user, "tarefa":todo})
