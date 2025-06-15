@@ -1,0 +1,7 @@
+<h1>Configuração de cores, coisas básicas</h1>
+    <form method="POST">
+    {% csrf_token %}
+    <h1>Cor de destaque</h1>
+    {{ cor_de_destaque.as_p  }}
+    <button>Salvar</button>
+    </form>

@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("init.urls")),
     path('', include("main.urls")),
+    path('', include("agenda.urls")),
 ]
 
 

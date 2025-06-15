@@ -116,7 +116,7 @@ def remover(request, id_user, id_anotacao):
 
     if request.method == "POST":
         todo.delete()
-        return redirect("show", id_user=id_user , id_anotacao=id_anotacao)
+        return redirect("anotacoes", id_user=id_user)
     else:
         print(form.errors)
         return render (request, "delete.html", {"user":user, "tarefa":todo})

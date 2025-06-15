@@ -15,7 +15,7 @@ def login_user(request):
         if user is not None:
             login(request, user)
             #messages.success(request, 'Login realizado com sucesso!')
-            return redirect('main', id_user=user.id)
+            return redirect('welcome', id_user=user.id)
         else:
             #messages.error(request, 'CPF ou senha inválidos!')
             print(user)
@@ -27,7 +27,7 @@ def login_user(request):
 @login_required()
 def main(request, id_user: int):
     todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
-    form = TodoForm(request.POST)
+    form = TodoForm()
     user = get_object_or_404(User, id=id_user)
 
     #Consertar com o login_required
@@ -49,6 +49,16 @@ def main(request, id_user: int):
         "form":form,
     }
     return render(request, "main.html",context)
+
+
+def welcome(request, id_user):
+    if request.user.id != id_user:
+        return redirect("login")
+
+    user = get_object_or_404(User, id=id_user)
+    nick = user.username if user.username is not None else "User"
+    return render(request, "welcome.html", {"nick":nick})
+
 
 def logout(request):
     return redirect("login")

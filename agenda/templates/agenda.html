@@ -1,0 +1,108 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Agenda - {{ nome_mes }} {{ ano }}{% endblock title %}
+
+{% block extra_css %}
+<style>
+    /* Estilos específicos para a página de edição */
+    .edit-container {
+        max-width: 768px;
+        margin-top: 5vh;
+        margin-bottom: 5vh;
+    }
+    .label {
+        color: #dbdbdb;
+    }
+    .input, .textarea, .select select {
+        background-color: #2a2a2a;
+        border-color: #4a4a4a;
+        color: #e0e0e0;
+    }
+    .input::placeholder, .textarea::placeholder {
+        color: #7a7a7a;
+    }
+    .input:focus, .textarea:focus, .select select:focus,
+    .input:active, .textarea:active, .select select:active {
+        border-color: #3273dc;
+        box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+    }
+    .select:not(.is-multiple):not(.is-loading)::after {
+        border-color: #3273dc;
+    }
+    .hoje{
+        color: black;
+        background: {{ cor_de_destaque|default:"gray" }};
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+
+
+
+        <a class="navbar-item" href="{% url 'configs' id_user=user.id %}">Configurações</a>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }
+        th { background-color: #f0f0f0; }
+        td.vazio { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1 style="color: white">Calendário - {{ nome_mes }} {{ ano }}</h1>
+    <table>
+        <tr>
+            {% for dia in dias_semana %}
+                    <th >{{ dia }}</th>
+            {% endfor %}
+        </tr>
+        {% for semana in mes_dias %}
+            <tr>
+                {% for dia in semana %}
+                    {% if dia == 0 %}
+                        <td class="vazio"></td>
+                    {% elif dia == dia_atual %}
+                        <td class="hoje">{{ dia }}</td>
+                    {% else %}
+                        <td>{{ dia }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- SCRIPT SIMPLIFICADO ---
+        // A melhor prática é definir as classes nos widgets do forms.py.
+        // Este script serve como um "plano B" para garantir a estilização.
+        const form = document.querySelector('form');
+        if (form) {
+            form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="tel"], input[type="number"], input[type="date"], input[type="search"], input[type="file"]').forEach(el => {
+                if (!el.classList.contains('input')) {
+                    el.classList.add('input');
+                }
+            });
+
+            form.querySelectorAll('textarea').forEach(el => {
+                if (!el.classList.contains('textarea')) {
+                    el.classList.add('textarea');
+                }
+            });
+            // A lógica de envolver o <select> foi removida pois agora é tratada no HTML do template.
+        }
+
+        // JavaScript para fechar notificações
+        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+            const $notification = $delete.parentNode;
+            $delete.addEventListener('click', () => {
+                $notification.parentNode.removeChild($notification);
+            });
+        });
+    });
+</script>
+{% endblock extra_js %}

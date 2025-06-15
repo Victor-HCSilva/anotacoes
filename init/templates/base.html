@@ -28,10 +28,7 @@
     <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="container">
             <div class="navbar-brand">
-                    {% comment %}
- <!--               <a class="navbar-item" href="{% url 'main' %}">  Substitua 'home' pelo nome da sua URL da página inicial -->
-                    {%endcomment%}
-                        {%comment%}
+
                     <i class="fas fa-rocket fa-lg mr-2"></i> <!-- Exemplo de logo com ícone -->
                     <strong>Meu Projeto</strong>
                 </a>
@@ -45,10 +42,6 @@
 
             <div id="navbarMain" class="navbar-menu">
                 <div class="navbar-start">
-                    <!-- <a class="navbar-item" href="{% url 'home' %}"> Substitua 'home' -->
-                        <span class="icon is-small mr-1"><i class="fas fa-home"></i></span>
-                        Início
-                    </a>
 
                     <a class="navbar-item" href="#"> <!-- Exemplo de link -->
                         <span class="icon is-small mr-1"><i class="fas fa-info-circle"></i></span>
@@ -61,15 +54,15 @@
                             Mais
                         </a>
                         <div class="navbar-dropdown is-boxed is-dark">
-                            <a class="navbar-item" href="#">Item 1</a>
-                            <a class="navbar-item" href="#">Item 2</a>
+                                <a class="navbar-item" href="{% url 'main' id_user=user.id %}">Nova anotaçao</a>
                             <hr class="navbar-divider">
-                            <a class="navbar-item" href="#">Item 3</a>
+                                {% comment %}
+                                <a class="navbar-item" href="{% url 'agenda' id_user=user.id ano=None mes=None %}">Compromissos</a>
+                                {% endcomment %}
                         </div>
                     </div>
                 </div>
 
-                        {%endcomment%}
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons">
@@ -78,7 +71,6 @@
                                     <strong>Olá, {{ user.username }}</strong>
                                 </a>
                                 <a class="" href="#"> <!-- Link para logout -->
-
 
                             <a class="button is-light" href="{% url 'logout'%}">
 
