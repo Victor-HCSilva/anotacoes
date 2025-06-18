@@ -5,7 +5,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from .forms import ColorForm
 from django.contrib.auth.models import User
-from .models import Colors
+from .models import Colors, Agenda
+from .forms import AgendaForm
+from .utils import get_days
 
 
 class Agenda:
@@ -13,6 +15,17 @@ class Agenda:
         self.request = request
 
     def agenda(self, id_user, ano=None, mes=None):
+        form = AgendaForm(self.request.POST)
+
+        if self.request.method == "POST":
+            if form.is_valid():
+                agenda = form.save(commit=False)
+                agenda.user = user
+                print("User:", config.user)
+                agenda.save()
+            else:
+                print("Erros:",form.errors)
+
         agora = datetime.now()
         ano = ano or agora.year
         mes = mes or agora.month
@@ -23,7 +36,7 @@ class Agenda:
         dia_do_mes = hoje.day
         user = get_object_or_404(User, id=id_user)
         cor_de_destaque = Colors.objects.filter(user=user).first()
-
+        eventos = Agenda.objects.all("")
 
         context = {
             'ano': ano,
@@ -40,6 +53,7 @@ class Agenda:
 
         return render(self.request, "agenda.html", context)
 
+
 class Configs:
     def __init__(self, request: HttpRequest):
         self.request = request
@@ -47,12 +61,13 @@ class Configs:
 
     def configs(self, id_user: int):
         form = ColorForm(self.request.POST)
+        user = get_object_or_404(User, id=id_user)
         context = {
             "nada":"nada",
             "cor_de_destaque":form,
+            "user":user,
         }
 
-        user = get_object_or_404(User, id=id_user)
 
         if self.request.method == "POST":
             if form.is_valid():
