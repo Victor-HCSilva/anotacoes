@@ -1,0 +1,7 @@
+<h1>Ola mundo</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button>Confirmar</button>
+</form>
+<a class="navbar-item" href="{% url 'agenda' id_user=user.id %}">Cancelar</a>

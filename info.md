@@ -37,3 +37,22 @@ tarefa ou evento importante.
 - formulario para agenda criado
 - O contexto devem ser corrigidos
 - Ainda falta dar um "tapa" no template
+
+
+### Resultados do dia 19/06/2025:
+- Coloquei os apps em um unico app
+- Agora é possivel adicional eventos na agenda
+- Por enquanto sem erros aparentes
+- Adicição de tag personalizada
+- vêm muitas ideias sobre a agenda, como clicar no dia do evento e poder ver seus detalhes
+- Uma refatoração é algo a se considerar apenas no "fim" do projeto.
+- Nada do app para android ainda
+- Nenhuma configuração em arquivo de ambiente
+
+
+### Resultados do dia 19/06/2025 (2):
+- Adiçãop dos enpoints (não testados de editar e deletar)
+- Falta o html e algumas configurações nas urls e funções
+- Penso em retirar a frase no quadro e deizar apenas em baixo mesmo
+- Conforme a prioridade a cor do quadrado, com a indicação de cores acima,
+talvez até combinações de cores de personalização
