@@ -15,7 +15,7 @@
 
 <div class="box has-background-black-bis has-text-centered">
     <h1 class="title is-2 has-text-weight-light">
-        O que vamos fazer hoje, <strong class="has-text-white">{{ user.username }}</strong>?
+        O que vai fazer hoje, <strong class="has-text-white">{{ user.username }}</strong>?
     </h1>
     <p class="subtitle is-5 has-text-grey">
         Escolha uma das opções abaixo para começar suas atividades.
@@ -40,8 +40,18 @@
 
 {# Você pode adicionar mais conteúdo aqui, como um resumo rápido ou estatísticas #}
 <div class="box has-background-black-bis mt-5">
-    <h3 class="title is-4">Atalhos Rápidos</h3>
-    <p>Aqui poderia haver um resumo das suas últimas 3 anotações ou próximos 2 compromissos.</p>
+    <h3 style="color:rgb(200,200,200)" class="title is-4">Algumas  de suas anotações</h3>
+
+{% for todo in todos %}
+    {# forloop.counter0 é o contador que começa em 0 (0, 1, 2, 3...) #}
+    {% if forloop.counter0 <= 3 %}
+        <hr>
+        <a class="is-link" href="{% url 'show' id_user=user.id id_anotacao=todo.id%}">
+            <p>{{ todo.titulo }}</p>
+        </a>
+        <hr>
+    {% endif %}
+{% endfor %}
     <!-- Exemplo de conteúdo futuro -->
 </div>
 

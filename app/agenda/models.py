@@ -9,7 +9,24 @@ class Colors(models.Model):
         AZUL = "blue", "Azul"
         VERDE = "green", "Verde"
         VERMELHO = "red", "Vermelho"
-        BRANCO = "white", "Branco"
+        PRETO = "black", "Preto"
+        BRANCO = "#FFFFFF", "Branco"  # Nota: Texto branco pode ficar invisível em fundos claros
+
+        # Tons vibrantes e comuns
+        AMARELO = "#FFC107", "Amarelo"
+        LARANJA = "orange", "Laranja"  # Mantive "orange" para simplicidade
+        ROXO = "#6f42c1", "Roxo"
+        ROSA = "#d63384", "Rosa"
+        CIANO_TURQUESA = "#0dcaf0", "Ciano/Turquesa"
+
+        # Tons neutros e terrosos
+        CINZA = "#6c757d", "Cinza"
+        MARROM = "#795548", "Marrom"
+
+        # Tons metálicos
+        DOURADO = "#FFD700", "Dourado"
+        PRATA = "#C0C0C0", "Prata"
+
     # OneToOneField garante que cada usuário tenha apenas uma configuração
     user = models.OneToOneField(
         User,
@@ -18,13 +35,13 @@ class Colors(models.Model):
     )
     cor_de_destaque = models.CharField(
         "Cor de destaque",
-        max_length=10,
+        max_length=19,
         choices=Cor.choices,
         default=Cor.AZUL
     )
     cor_do_dia = models.CharField(
         "Cor de destaque",
-        max_length=10,
+        max_length=19,
         choices=Cor.choices,
         default=Cor.AZUL
     )

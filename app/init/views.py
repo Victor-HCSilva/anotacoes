@@ -7,7 +7,7 @@ from .models import Todo
 from django.contrib.auth import logout
 
 
-
+@login_required()
 def login_user(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -59,9 +59,19 @@ def welcome(request, id_user):
         return redirect("login")
 
     user = get_object_or_404(User, id=id_user)
+    todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
     nick = user.username if user.username is not None else "User"
-    return render(request, "welcome.html", {"nick":nick})
+    context = {
+        "nick":"nick",
+        "todos":todos,
+        "user":user,
+    }
+    return render(request, "welcome.html", context)
 
+
+def sobre(request):
+    user = get_object_or_404(User, id=request.user.id)
+    return render(request, "sobre.html",{"user":user})
 
 def logout_(request):
     logout(request)

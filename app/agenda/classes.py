@@ -15,15 +15,14 @@ class Agenda:
         self.request = request
 
     def agenda(self, id_user, ano=None, mes=None):
-        #Caso não seja o mesmo usuario
         if self.request.user.id != id_user:
             return redirect('login')
 
         form = AgendaForm(self.request.POST)
         user = get_object_or_404(User, id=id_user)
 
-        if self.request.method == "POST":
-            if form.is_valid():
+        if form.is_valid():
+            if self.request.method == "POST":
                 agenda = form.save(commit=False)
                 agenda.user = user
                 print("User:", agenda.user)
