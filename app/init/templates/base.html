@@ -4,170 +4,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>{% block title %}Meu App Django{% endblock title %}</title>
 
-    <!-- Bulma CSS (Framework Principal) -->
+    <!-- Frameworks e Ícones -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-
-    <!-- Bulma Dark Theme (Extensão para tema escuro) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-dark@0.4.1/css/bulma-dark.min.css">
-
-    <!-- Font Awesome (Ícones) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- CSS customizado específico da página ou do projeto -->
+    <!-- CSS customizado -->
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 
-    <!-- Estilos para o layout de menu lateral -->
     <style>
-        /* Garante que o layout ocupe toda a altura da tela */
-        html, body {
-            height: 100%;
-            overflow: hidden; /* Evita a barra de rolagem no body */
-        }
-
-        /* Coluna do menu lateral: fixa e com rolagem interna se necessário */
-        .sidebar-column {
-            height: 100vh; /* 100% da altura da janela */
-            overflow-y: auto; /* Adiciona barra de rolagem se o menu for muito grande */
-        }
-
-        /* Coluna do conteúdo principal: ocupa o resto da tela e tem sua própria rolagem */
-        .main-content-column {
+        /* Estilos para o layout padrão com menu lateral */
+        .sidebar-column, .main-content-column {
             height: 100vh;
             overflow-y: auto;
         }
-
-        /* Pequeno ajuste para o logo no menu */
+        html, body {
+            overflow: hidden; /* Evita rolagem dupla no layout padrão */
+        }
         .menu-logo {
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem 1rem;
-            border-bottom: 1px solid #4a4a4a; /* Linha divisória */
+            border-bottom: 1px solid #4a4a4a;
         }
     </style>
-
     {% block extra_css %}{% endblock extra_css %}
-
 </head>
 <body class="has-background-dark has-text-light-grey">
 
+    {% block body_wrapper %}
+    {# ==================================================================== #}
+    {# === LAYOUT PADRÃO: Com menu lateral.                           === #}
+    {# === Este bloco pode ser sobrescrito por templates filhos (ex: login) #}
+    {# === para usar um layout de página inteira.                     === #}
+    {# ==================================================================== #}
     <div class="columns is-gapless">
         <!-- Coluna 1: Menu Lateral -->
         <div class="column is-2 has-background-black-ter sidebar-column">
-
-            <!-- Logo/Nome do Projeto -->
             <div class="menu-logo">
-                <a href="#" class="has-text-white"> <!-- Link para a página inicial -->
+                <a href="#" class="has-text-white">
                     <span class="icon-text">
-                        <span class="icon is-medium">
-                            <i class="fas fa-rocket fa-lg"></i>
-                        </span>
+                        <span class="icon is-medium"><i class="fas fa-rocket fa-lg"></i></span>
                         <strong class="is-size-5 ml-2">Meu Projeto</strong>
                     </span>
                 </a>
             </div>
-
-            <!-- Componente de Menu do Bulma -->
             <aside class="menu p-4">
-                <p class="menu-label">
-                    Geral
-                </p>
+                {# ... (todo o conteúdo do seu menu lateral vai aqui) ... #}
+                <p class="menu-label">Geral</p>
                 <ul class="menu-list">
-                    <li>
-                        <a href="#"> <!-- Exemplo: Link para Dashboard -->
-                            <span class="icon-text">
-                                <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
-                                <span>Dashboard</span>
-                            </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#"> <!-- Exemplo: Link 'Sobre' -->
-                            <span class="icon-text">
-                                <span class="icon"><i class="fas fa-info-circle"></i></span>
-                                <span>Sobre</span>
-                            </span>
-                        </a>
-                    </li>
+                    <li><a>Dashboard</a></li>
+                    <li><a>Sobre</a></li>
                 </ul>
-
-                <p class="menu-label">
-                    Ferramentas
-                </p>
+                <p class="menu-label">Conta</p>
                 <ul class="menu-list">
-                    {% comment %} Removendo a lógica do dropdown e transformando em links diretos,
-                                      que é mais comum em menus laterais. {% endcomment %}
-                    <li>
-                        <a href="#"> <!-- Link 'Nova Anotação' -->
-                            <span class="icon-text">
-                                <span class="icon"><i class="fas fa-plus-square"></i></span>
-                                <span>Nova Anotação</span>
-                            </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#"> <!-- Link 'Compromissos' -->
-                             <span class="icon-text">
-                                <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                                <span>Compromissos</span>
-                            </span>
-                        </a>
-                    </li>
+                    {% if user.is_authenticated %}
+                        <li><div class="p-2 has-text-grey-light">Olá, <strong>{{ user.username }}</strong></div></li>
+                        <li><a href="{% url 'logout' %}">Sair</a></li>
+                    {% else %}
+                        <li><a href="#">Entrar</a></li>
+                        <li><a href="#">Cadastrar</a></li>
+                    {% endif %}
                 </ul>
-
-                {% if user.is_authenticated %}
-                <p class="menu-label">
-                    Conta
-                </p>
-                <ul class="menu-list">
-                     <li>
-                        <div class="p-2 has-text-grey-light">
-                            Olá, <strong>{{ user.username }}</strong>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="{% url 'logout' %}">
-                            <span class="icon-text">
-                                <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-                                <span>Sair</span>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-                {% else %}
-                <p class="menu-label">
-                    Acesso
-                </p>
-                <ul class="menu-list">
-                     <li>
-                        <a href="#"> <!-- Link para login -->
-                             <span class="icon-text">
-                                <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
-                                <span>Entrar</span>
-                            </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#"> <!-- Link para cadastro -->
-                             <span class="icon-text">
-                                <span class="icon"><i class="fas fa-user-plus"></i></span>
-                                <span>Cadastrar</span>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-                {% endif %}
             </aside>
         </div>
 
         <!-- Coluna 2: Conteúdo Principal -->
         <div class="column is-10 main-content-column">
-            <!-- Conteúdo Principal -->
             <main class="section">
-                <div class="container is-fluid"> <!-- 'is-fluid' para ocupar todo o espaço da coluna -->
+                <div class="container is-fluid">
                     {% block messages %}
                         {% if messages %}
                             {% for message in messages %}
@@ -180,41 +88,23 @@
                     {% endblock messages %}
 
                     {% block content %}
-                    <!-- O conteúdo específico de cada página virá aqui -->
-                    <div class="box has-background-dark">
-                         <h1 class="title has-text-weight-bold">Página de Exemplo</h1>
-                         <p class="subtitle">Este é o conteúdo padrão do template base.</p>
-                         <p>Você pode sobrescrever este bloco `content` em seus templates filhos.</p>
-                    </div>
+                    <!-- Conteúdo padrão, será substituído pelos filhos -->
                     {% endblock content %}
                 </div>
             </main>
-            <!-- Fim Conteúdo Principal -->
-
-            <!-- Rodapé (agora dentro da coluna de conteúdo) -->
             <footer class="footer has-background-black-ter">
-                <div class="content has-text-centered has-text-grey-light">
-                    <p>
-                        <strong>Para desorganizados como eu|</strong> por <a href="#" class="has-text-primary">Victor Hugo ❤️|</a>.
-                        O código fonte é licenciado <a href="http://opensource.org/licenses/mit-license.php" class="has-text-primary">MIT</a>.
-                    </p>
-                    <p>
-                        <a href="#" class="icon is-medium has-text-grey-light"><i class="fab fa-github fa-lg"></i></a>
-                        <a href="#" class="icon is-medium has-text-grey-light"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="icon is-medium has-text-grey-light"><i class="fab fa-linkedin fa-lg"></i></a>
-                    </p>
+                <div class="content has-text-centered">
+                    <p>Meu Rodapé</p>
                 </div>
             </footer>
-            <!-- Fim Rodapé -->
         </div>
     </div>
+    {% endblock body_wrapper %}
 
 
     <!-- Scripts -->
-    <!-- JavaScript para fechar as notificações do Bulma -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // JavaScript para fechar as notificações
             (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
                 const $notification = $delete.parentNode;
                 $delete.addEventListener('click', () => {
@@ -223,8 +113,6 @@
             });
         });
     </script>
-
-    <!-- Scripts customizados específicos da página ou do projeto -->
     <script src="{% static 'js/custom.js' %}"></script>
     {% block extra_js %}{% endblock extra_js %}
 </body>

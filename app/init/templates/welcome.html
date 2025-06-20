@@ -1,44 +1,52 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Início{% endblock title %}
+{% block title %}Início - Meu App{% endblock title %}
 
 {% block extra_css %}
-<style>
-    /* Estilos específicos para a página de login, se necessário */
-    .login-container {
-        max-width: 450px; /* Limita a largura da caixa de login para melhor visualização */
-        margin-top: 8vh;  /* Um pouco de espaço do topo */
-        margin-bottom: 8vh;
-    }
-    .label { /* Garante que os labels do formulário sejam claros, herdado do base mas pode reforçar */
-        color: #dbdbdb;
-    }
-    .input { /* Estilos para inputs no tema escuro, herdado do base */
-        background-color: #2a2a2a;
-        border-color: #4a4a4a;
-        color: #e0e0e0;
-    }
-    .input::placeholder {
-        color: #7a7a7a;
-    }
-    .input:focus, .input:active {
-        border-color: #3273dc; /* Cor primária do Bulma para foco */
-        box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
-    }
-</style>
+{# Nenhum estilo extra é necessário aqui. Os estilos de botão e texto já vêm do Bulma e do tema escuro. #}
 {% endblock extra_css %}
 
 {% block content %}
+{# ========================================================================= #}
+{# === Como nas outras páginas, o conteúdo vai direto para o bloco 'content'. #}
+{# === O base.html já coloca isso dentro da área principal da aplicação.   === #}
+{# ========================================================================= #}
 
+<div class="box has-background-black-bis has-text-centered">
+    <h1 class="title is-2 has-text-weight-light">
+        O que vamos fazer hoje, <strong class="has-text-white">{{ user.username }}</strong>?
+    </h1>
+    <p class="subtitle is-5 has-text-grey">
+        Escolha uma das opções abaixo para começar suas atividades.
+    </p>
 
-<h1 style="color: white" >O que irá fazer hoje ?</h1>
+    {# Usar a classe 'buttons' e 'is-centered' para alinhar e espaçar os botões corretamente #}
+    <div class="buttons is-centered are-large mt-5">
+        <a class="button is-primary" href="{% url 'main' id_user=user.id %}">
+            <span class="icon">
+                <i class="fas fa-pen-alt"></i>
+            </span>
+            <span>Criar uma Anotação</span>
+        </a>
+        <a class="button is-link" href="{% url 'agenda' id_user=user.id %}">
+            <span class="icon">
+                <i class="fas fa-calendar-alt"></i>
+            </span>
+            <span>Ver sua Agenda</span>
+        </a>
+    </div>
+</div>
 
-<a class="button" href="{% url 'main' id_user=user.id %}">Crie uma anotação</a>
-<a class="button" href="{% url 'agenda' id_user=user.id %}">Veja sua agenda</a>
-<br>
+{# Você pode adicionar mais conteúdo aqui, como um resumo rápido ou estatísticas #}
+<div class="box has-background-black-bis mt-5">
+    <h3 class="title is-4">Atalhos Rápidos</h3>
+    <p>Aqui poderia haver um resumo das suas últimas 3 anotações ou próximos 2 compromissos.</p>
+    <!-- Exemplo de conteúdo futuro -->
+</div>
+
 {% endblock content %}
 
 {% block extra_js %}
-{# O script de fechar notificações já está no base.html, não precisa repetir aqui se não houver JS específico #}
+{# Nenhum JavaScript específico é necessário para esta página. #}
 {% endblock extra_js %}
