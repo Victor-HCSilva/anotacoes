@@ -5,166 +5,126 @@
 
 {% block extra_css %}
 <style>
-    /* Estilos específicos para a página de listagem, se necessário */
+    /* O CSS agora está muito mais limpo, focando apenas no layout e não nas cores do texto */
     .card-anotacao {
-        margin-bottom: 1.5rem; /* Espaçamento entre os cards */
-        background-color: #2f2f2f; /* Fundo um pouco mais claro que o box padrão para destacar */
+        background-color: #2f2f2f;
         border: 1px solid #4a4a4a;
-    }
-    .card-anotacao .card-header-title {
-        color: #c0c0c0; /* Cor mais clara para o título do card */
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     .card-anotacao .card-content {
-        color: #b0b0b0; /* Cor para o conteúdo do card */
+        flex-grow: 1; /* Empurra o rodapé para baixo, alinhando-o com outros cards */
     }
-    .card-anotacao .card-footer-item {
-        color: #3298dc; /* Cor de link padrão do Bulma para ações no rodapé */
+    .card-anotacao .card-footer-item.has-text-danger:hover {
+        background-color: #f14668;
+        color: white;
     }
-    .card-anotacao .card-footer-item:hover {
-        color: #ffffff;
-        background-color: #3298dc;
-    }
-    .priority-tag {
-        font-weight: bold;
-    }
-    .priority-alta { background-color: #f14668; color: white; } /* Vermelho para alta */
-    .priority-media { background-color: orange ; color: white !important; } /* Amarelo para média */
-    .priority-baixa { background-color: #48c774; color: white;} /* Verde para baixa */
-    .priority-default { background-color: #7a7a7a; color: red !importante; } /* Cinza para outras */
-    .priority-baixa, .priority-media, .priority-alta, .priority-default{
-        padding: 5px;
-        border: 1px solid white;
-        border-radius: 10px;
-        cursor: pointer;
-    }
-     .priority-baixa:hover, .priority-media: hover, .priority-alta: hover, .priority-default: hover{
-        color: black;
-   }
-
-
 </style>
 {% endblock extra_css %}
 
 {% block content %}
-<div class="container">
 
-    <div class="level mb-5">
-        <div class="level-left">
-            <div class="level-item">
-                <h1 class="title is-2 has-text-light">
-                    <span class="icon mr-2"><i class="fas fa-clipboard-list"></i></span>
-                    Minhas Anotações
-                </h1>
-            </div>
+<div class="level mb-5">
+    <div class="level-left">
+        <div class="level-item">
+            <h1 class="title is-2"> {# A cor já vem do base.html #}
+                <span class="icon mr-3"><i class="fas fa-clipboard-list fa-lg"></i></span>
+                Minhas Anotações
+            </h1>
         </div>
-        <div class="level-right">
-            <div class="level-item">
-                <a class="button is-primary" href="{% url 'main' id_user=user.id %}"> {# Substitua 'main' pelo nome correto da sua URL de criar/home #}
+    </div>
+    <div class="level-right">
+        <div class="level-item">
+            <div class="buttons">
+                <a class="button is-primary" href="{% url 'main' id_user=user.id %}">
                     <span class="icon"><i class="fas fa-plus"></i></span>
-                    <span>Nova Anotação/Voltar</span>
+                    <span>Nova Anotação</span>
                 </a>
-            <a class="button is-light is-medium" href="{% url 'agenda' id_user=user.id %}">
-                    Agenda
-            </a>
-
+        <a class="button is-link" href="{% url 'agenda' id_user=user.id %}">
+            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+            <span>Agenda</span>
+        </a>
             </div>
         </div>
     </div>
-
-    {% if anotacoes %}
-        <div class="columns is-multiline">
-            {% for anotacao_item in anotacoes %} {# Renomeei 'i' para 'anotacao_item' para clareza #}
-                <div class="column is-one-third-desktop is-half-tablet">
-                    <div class="card card-anotacao">
-                        <header class="card-header">
-                    <p class="card-header-title ">
-
-
-
-                    {% if anotacao_item.favorito %}
-                        ⭐
-                    {% else %}
-                        ✏️
-                    {% endif %}
-
-                        {{ anotacao_item.titulo|truncatewords:7 }}
-
-                            </p>
-
-                    <p class="card-header-title" style="color: {{ anotacao_item.color  }}">
-
-                        {% if not anotacao_item.completo %}
-                        <strong style="color: gray; padding:5px;">
-
-                        {{anotacao_item.message}}
-                        </strong>
-                        {{ anotacao_item.prazo  }}
-
-                        {% else %}
-                        Concluído
-                        {% endif %}
-                    </p>
-
-
-
-                            {% if anotacao_item.prioridade %}
-                                <span class="card-header-icon">
-                                    <span class="
-                                        {% if anotacao_item.prioridade|lower == 'mínima' %}priority-baixa
-                                        {% elif anotacao_item.prioridade|lower == 'mediana' %}priority-media
-                                        {% elif anotacao_item.prioridade|lower == 'máxima' %}priority-alta
-                                        {% else %}priority-default{% endif %}
-                                        is-medium priority-tag">
-                                        {{ anotacao_item.prioridade }}
-                                    </span>
-                                </span>
-                            {% endif %}
-                        </header>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="has-text-grey-light">
-                                    {{ anotacao_item.anotacao|truncatewords:20|linebreaksbr }}
-                                </p>
-                            </div>
-                        </div>
-                        <footer class="card-footer">
-                            <a href="{% url 'show' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item">
-                                <span class="icon is-small mr-1"><i class="fas fa-eye"></i></span>
-                                Detalhes
-                            </a>
-                            <a href="{% url 'editar' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item"> {# Adicionando link de editar como exemplo #}
-                                <span class="icon is-small mr-1"><i class="fas fa-edit"></i></span>
-                                Editar
-                            </a>
-                            <a class="button is-danger is-outlined" href="{% url 'remover' id_user=user.id id_anotacao=anotacao_item.id %}">
-                                <span class="icon"><i class="fas fa-trash"></i></span>
-                            </a>
-                        </footer>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="notification is-info is-light mt-5">
-            <button class="delete"></button>
-            <p class="has-text-centered">
-                <span class="icon is-large mb-3"><i class="fas fa-folder-open fa-2x"></i></span> <br>
-                Você ainda não tem nenhuma anotação cadastrada.
-            </p>
-            <div class="has-text-centered mt-4">
-                <a class="button is-primary" href="{% url 'main' id_user=user.id %}">
-                    <span class="icon"><i class="fas fa-plus"></i></span>
-                    <span>Criar Primeira Anotação</span>
-                </a>
-            </div>
-        </div>
-    {% endif %}
-
 </div>
 
+{% if anotacoes %}
+    <div class="columns is-multiline">
+        {% for anotacao_item in anotacoes %}
+            <div class="column is-one-third-desktop is-half-tablet">
+                <div class="card card-anotacao">
+                    <header class="card-header">
+                        <p class="card-header-title is-clipped">
+                            <span class="icon-text">
+                                <span class="icon" title="{% if anotacao_item.favorito %}Favorito{% endif %}">
+                                    {% if anotacao_item.favorito %}
+                                        <i class="fas fa-star has-text-warning"></i>
+                                    {% else %}
+                                        <i class="fas fa-pen-alt has-text-grey-light"></i>
+                                    {% endif %}
+                                </span>
+                                {# O texto do título agora herdará o branco nítido do .card-header-title #}
+                                <span style="color: white;">{{ anotacao_item.titulo }}</span>
+                            </span>
+                        </p>
+                        <div class="card-header-icon">
+                            {% with prioridade=anotacao_item.prioridade|lower %}
+                                <span class="tag
+                                    {% if prioridade == 'máxima' %}is-danger
+                                    {% elif prioridade == 'mediana' %}is-warning
+                                    {% elif prioridade == 'mínima' %}is-success
+                                    {% else %}is-dark{% endif %}">
+                                    {{ anotacao_item.prioridade }}
+                                </span>
+                            {% endwith %}
+                        </div>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+                            {# Este texto agora terá a cor do body (branco suave) #}
+                            <p style="color: cyan;">{{ anotacao_item.anotacao|truncatewords:20|linebreaksbr }}</p>
+                            <br>
+                            {% if not anotacao_item.completo and anotacao_item.prazo %}
+                                {# Este texto secundário usará a cor de 'help' (cinza claro) #}
+                                <p class="is-size-7">
+                                    <span class="icon-text">
+                                        <span class="icon"><i class="fas fa-hourglass-half"></i></span>
+                                        <strong style="color: {{ anotacao_item.color|default:'inherit' }};">
+                                            Prazo: {{ anotacao_item.prazo }}
+                                        </strong>
+                                    </span>
+                                </p>
+                            {% elif anotacao_item.completo %}
+                                <p class="is-size-7 has-text-success">
+                                     <span class="icon-text">
+                                        <span class="icon"><i class="fas fa-check-circle"></i></span>
+                                        <strong style="color:white;">Concluído</strong>
+                                    </span>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        <a href="{% url 'show' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item">Ver</a>
+                        <a href="{% url 'editar' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item">Editar</a>
+                        <a href="{% url 'remover' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item has-text-danger">Apagar</a>
+                    </footer>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="box has-text-centered py-6">
+        <span class="icon is-large has-text-grey-light"><i class="fas fa-folder-open fa-3x"></i></span>
+        <h2 class="title is-4 mt-4">Nenhuma anotação encontrada</h2>
+        <p class="subtitle is-6">Que tal criar a sua primeira agora mesmo?</p>
+        <a class="button is-primary is-medium mt-4" href="{% url 'main' id_user=user.id %}">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <span>Criar Primeira Anotação</span>
+        </a>
+    </div>
+{% endif %}
 
 {% endblock content %}
-
-{% block extra_js %}
-{# O script de fechar notificações já está no base.html #}
-{% endblock extra_js %}
