@@ -4,6 +4,8 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from .models import Todo
+from django.contrib.auth import logout
+
 
 
 def login_user(request):
@@ -51,6 +53,7 @@ def main(request, id_user: int):
     return render(request, "main.html",context)
 
 
+@login_required()
 def welcome(request, id_user):
     if request.user.id != id_user:
         return redirect("login")
@@ -60,5 +63,6 @@ def welcome(request, id_user):
     return render(request, "welcome.html", {"nick":nick})
 
 
-def logout(request):
+def logout_(request):
+    logout(request)
     return redirect("login")

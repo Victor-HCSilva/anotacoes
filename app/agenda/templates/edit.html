@@ -1,7 +1,92 @@
-<h1>Ola mundo</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button>Confirmar</button>
-</form>
-<a class="navbar-item" href="{% url 'agenda' id_user=user.id %}">Cancelar</a>
+{% extends "base.html" %}
+{% load static %}
+
+{# O título da aba do navegador agora reflete a ação de edição #}
+{% block title %}Editar Evento: {{ form.instance.titulo|default:"Evento" }}{% endblock title %}
+
+{% block extra_css %}
+{# CSS continua o mesmo, não há necessidade de mudança aqui #}
+{% endblock extra_css %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-two-thirds-tablet is-half-desktop">
+
+        <div class="box has-background-black-bis">
+
+            {# --- CORREÇÃO APLICADA AQUI --- #}
+            <h1 class="title is-3">
+                <span class="icon-text">
+                    <span class="icon"><i class="fas fa-edit"></i></span> {# Ícone de edição #}
+                    <span>Editar Evento</span> {# Texto corrigido #}
+                </span>
+            </h1>
+            <p class="subtitle is-6 has-text-grey">
+                Modifique os detalhes do seu compromisso abaixo.
+            </p>
+            {# --- FIM DA CORREÇÃO --- #}
+
+            <hr class="has-background-grey-darker">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                {# Renderização manual do formulário (sem alterações) #}
+                {% for field in form %}
+                    <div class="field">
+                        <label class="label" for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+                        <div class="control">
+                            {{ field }}
+                        </div>
+                        {% if field.help_text %}
+                            <p class="help">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p class="help is-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="field is-grouped mt-5">
+                    <div class="control">
+                        <button type="submit" class="button is-success is-medium">
+                            <span class="icon"><i class="fas fa-check"></i></span>
+                            <span>Salvar Alterações</span>
+                        </button>
+                    </div>
+                    <div class="control">
+                        <a class="button is-light is-medium" href="{% url 'agenda' id_user=user.id %}">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{# O script de apoio para formulários continua o mesmo #}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        if (form) {
+            form.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type === 'submit' || el.type === 'button' || el.type === 'reset' || el.type === 'checkbox' || el.type === 'radio') { return; }
+                if (!el.classList.contains('input') && el.tagName !== 'TEXTAREA' && el.tagName !== 'SELECT') { el.classList.add('input'); }
+                if (el.tagName === 'TEXTAREA' && !el.classList.contains('textarea')) { el.classList.add('textarea'); }
+                if (el.tagName === 'SELECT' && !el.parentElement.classList.contains('select')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'select is-fullwidth';
+                    el.parentNode.insertBefore(wrapper, el);
+                    wrapper.appendChild(el);
+                }
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}

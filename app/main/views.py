@@ -47,6 +47,7 @@ def anotacoes(request, id_user):
     return render(request, "anotacoes.html", context)
 
 
+@login_required()
 def show(request, id_user,id_anotacao):
     form = ImageForm()
 
@@ -122,6 +123,7 @@ def remover(request, id_user, id_anotacao):
         return render (request, "delete.html", {"user":user, "tarefa":todo})
 
 
+@login_required()
 def apagar_imagem(request, id_user, id_imagem,id_anotacao):
     image = get_object_or_404(Image, id=id_imagem)
     user = get_object_or_404(User, id=id_user)
@@ -141,6 +143,7 @@ def apagar_imagem(request, id_user, id_imagem,id_anotacao):
     return render (request, "apagar_imagem.html", {"user":user, "imagem":image, "tarefa":todo})
 
 
+@login_required()
 def editar_descricao(request, id_user, id_imagem, id_anotacao):
     image = get_object_or_404(Image, id=id_imagem)
     user = get_object_or_404(User, id=id_user)

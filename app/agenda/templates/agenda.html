@@ -1,151 +1,201 @@
-
 {% extends "base.html" %}
-{% load custom_filters %} {# Carrega o filtro que criamos #}
+{% load custom_filters %}
 {% load static %}
 
 {% block title %}Agenda - {{ nome_mes }} {{ ano }}{% endblock title %}
 
 {% block extra_css %}
 <style>
-    /* Estilos específicos para a página de edição */
-    .edit-container {
-        max-width: 768px;
-        margin-top: 5vh;
-        margin-bottom: 5vh;
-    }
-    .label {
-        color: #dbdbdb;
-    }
-    .input, .textarea, .select select {
+    /* Estilos centralizados e simplificados para o calendário */
+    .table.calendar {
+        table-layout: fixed;
         background-color: #2a2a2a;
-        border-color: #4a4a4a;
-        color: #e0e0e0;
     }
-    .input::placeholder, .textarea::placeholder {
-        color: #7a7a7a;
+    .table.calendar th {
+        color: #ffffff;
+        background-color: #1e1e1e;
+        text-align: center;
     }
-    .input:focus, .textarea:focus, .select select:focus,
-    .input:active, .textarea:active, .select select:active {
-        border-color: #3273dc;
-        box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+    .table.calendar td {
+        border: 1px solid #4a4a4a;
+        height: 120px;
+        vertical-align: top;
+        padding: 0.5em;
+        transition: background-color 0.2s ease-in-out;
     }
-    .select:not(.is-multiple):not(.is-loading)::after {
-        border-color: #3273dc;
+    .table.calendar td:hover {
+        background-color: #383838;
     }
-    .cor_de_destaque{
-        color: black;
-        background: {{ cor_de_destaque|default:"gray" }};
-    }
-    .dia-de-evento{
+    .is-empty { background-color: #222222 !important; cursor: default; }
+    .is-today .day-number {
+        background-color: #3273dc;
         color: white;
+        border-radius: 50%;
+        width: 1.75em;
+        height: 1.75em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
     }
-    .text-title{
-         font-size: 0.1 rem !important;
+    .has-events { background-color: {{ cor_de_destaque|default:'#363636' }}; }
+    .event-title {
+        display: block;
+        font-size: 0.8rem;
+        padding: 2px 5px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        margin-top: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-left: 3px solid {{ cor_de_destaque|default:'blue' }};
     }
 </style>
 {% endblock extra_css %}
 
 {% block content %}
-        <a class="navbar-item" href="{% url 'configs' id_user=user.id %}">Configurações</a>
-    <style>
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }
-        th { background-color: #f0f0f0; }
-        td.vazio { background-color: #f9f9f9; }
-    </style>
-</head>
-<body>
-    <h1 style="color: white">Calendário - {{ nome_mes }} {{ ano }}</h1>
-    <a class="navbar-item" href="{% url 'welcome' id_user=user.id %}">Início</a>
-    <a class="navbar-item" href="{% url 'anotacoes' id_user=user.id %}">Anotações</a>
-<table>
-    <tr>
-        {% for dia_semana in dias_semana %}
-            <th>{{ dia_semana }}</th>
-        {% endfor %}
-    </tr>
-    {% for semana in mes_dias %}
-    <tr>
-        {% for dia in semana %}
-            {% comment %} A lógica agora é simples e hierárquica {% endcomment %}
 
-            {% if dia == 0 %}
-                <td class="vazio"></td>
+{# --- CORREÇÃO APLICADA AQUI: USANDO O COMPONENTE 'LEVEL' PARA ORGANIZAR O CABEÇALHO --- #}
+<div class="level mb-5">
+    {# Level Left: Título da Página #}
+    <div class="level-left">
+        <div class="level-item">
+            <div>
+                <h1 class="title is-2">
+                    <span class="icon mr-3"><i class="fas fa-calendar-alt fa-lg"></i></span>
+                    Agenda: {{ nome_mes }} {{ ano }}
+                </h1>
+                <p class="subtitle is-5 has-text-grey">Visualize e gerencie seus compromissos.</p>
+            </div>
+        </div>
+    </div>
+    {# Level Right: Botões de Navegação e Ação #}
+    <div class="level-right">
+        <div class="level-item">
+            <div class="buttons">
+                <a class="button is-light" href="{% url 'anotacoes' id_user=user.id %}">
+                    <span class="icon"><i class="fas fa-clipboard-list"></i></span>
+                    <span>Anotações</span>
+                </a>
+                <a class="button" href="{% url 'configs' id_user=user.id %}">
+                    <span class="icon"><i class="fas fa-cog"></i></span>
+                    <span>Configurações</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-            {% comment %}
-            Verifica se o número do dia existe como chave no nosso dicionário.
-            Esta é a verificação principal e muito eficiente.
-            {% endcomment %}
-            {% elif dia in eventos_por_dia %}
-                <td class="dia-de-evento cor_de_destaque">
-                    {{ dia }}
-                    <ul>
-                        {% comment %}
-                            Agora sim, fazemos um laço apenas nos eventos DESTE dia.
-                            Usamos nosso filtro para pegar a lista de títulos.
-                        {% endcomment %}
-                        {% for titulo in eventos_por_dia|get_item:dia %}
-                            <li style="font-size:0.5 rem !important;" class="text-title">• {{ titulo }}</li>
+<div class="columns">
+    {# COLUNA DA ESQUERDA: CALENDÁRIO VISUAL #}
+    <div class="column is-two-thirds">
+        <div class="box has-background-black-bis p-4">
+            <table class="table is-bordered is-fullwidth calendar">
+                <thead>
+                    <tr>
+                        {% for dia_semana in dias_semana %}
+                            <th>{{ dia_semana }}</th>
                         {% endfor %}
-                    </ul>
-                </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for semana in mes_dias %}
+                    <tr>
+                        {% for dia in semana %}
+                            {% if dia == 0 %}
+                                <td class="is-empty"></td>
+                            {% else %}
+                                <td
+                                    style="color: white;"
+                                    class="
+                                    {% if dia == dia_atual and mes == mes_atual and ano == ano_atual %}is-today{% endif %}
+                                    {% if dia in eventos_por_dia %}has-events{% endif %}">
+                                    <span class="day-number">{{ dia }}</span>
+                                    {% if dia in eventos_por_dia %}
+                                        {% for titulo in eventos_por_dia|get_item:dia %}
+                                            <span style="color: rgb(100,100,200);" class="event-title">{{ titulo }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-            {% elif dia == dia_atual %}
-                <td >{{ dia }}</td>
+    {# COLUNA DA DIREITA: FORMULÁRIO E LISTA DE EVENTOS #}
+    <div class="column">
+        <div class="box has-background-black-bis mb-5">
+            <h3 class="title is-4">Adicionar Evento</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="field">
+                        <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <div class="control">{{ field }}</div>
+                        {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                        {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="field mt-4">
+                    <div class="control">
+                        <button type="submit" class="button is-success is-fullwidth">
+                            <span class="icon"><i class="fas fa-save"></i></span>
+                            <span>Salvar Evento</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
-            {% else %}
-                <td>{{ dia }}</td>
-            {% endif %}
-        {% endfor %}
-    </tr>
-    {% endfor %}
-</table>
+        <div class="box has-background-black-bis">
+             <h3 class="title is-4">Eventos em {{ nome_mes }}</h3>
+             {% for evento in eventos_do_mes %}
+                <article class="media">
+                    <div class="media-content">
+                        <p><strong>{{ evento.titulo }}</strong><br><small class="has-text-grey">{{ evento.data|date:"d/m/Y H:i" }}</small></p>
+                    </div>
+                    <div class="media-right">
+                        <div class="buttons are-small">
+                            <a class="button is-light is-outlined" href="{% url 'editar_evento' id_user=user.id id_event=evento.id %}"><span class="icon"><i class="fas fa-edit"></i></span></a>
+                            <a class="button is-danger is-outlined" href="{% url 'deletar_evento' id_user=user.id id_event=evento.id %}"><span class="icon"><i class="fas fa-trash"></i></span></a>
+                        </div>
+                    </div>
+                </article>
+                {% if not forloop.last %}<hr class="my-3">{% endif %}
+             {% empty %}
+                <p class="has-text-grey has-text-centered py-4">Nenhum evento para este mês.</p>
+             {% endfor %}
+        </div>
+    </div>
+</div>
 
-<h1>Adicione um evento</h1>
-    <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p  }}
-    <button>Salvar</button>
-
-    </form>
-    <h1>Eventos marcados</h1>
-    {% for evento in eventos_do_mes %}
-        <p>{{ evento }}</p>
-        <a class="navbar-item" href="{% url 'deletar_evento' id_user=user.id id_event=evento.id %}">Cancele</a>
-        <a class="navbar-item" href="{% url 'editar_evento' id_user=user.id id_event=evento.id %}">Editar</a>
-        <hr>
-    {% endfor %}
 {% endblock content %}
+
 
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- SCRIPT SIMPLIFICADO ---
-        // A melhor prática é definir as classes nos widgets do forms.py.
-        // Este script serve como um "plano B" para garantir a estilização.
         const form = document.querySelector('form');
         if (form) {
-            form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="tel"], input[type="number"], input[type="date"], input[type="search"], input[type="file"]').forEach(el => {
-                if (!el.classList.contains('input')) {
-                    el.classList.add('input');
-                }
-            });
-
-            form.querySelectorAll('textarea').forEach(el => {
-                if (!el.classList.contains('textarea')) {
+            form.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type === 'checkbox' || el.type === 'radio') {}
+                else if (el.tagName === 'SELECT') {
+                    if (!el.parentElement.classList.contains('select')) {
+                        const selectWrapper = document.createElement('div');
+                        selectWrapper.className = 'select is-fullwidth';
+                        el.parentNode.insertBefore(selectWrapper, el);
+                        selectWrapper.appendChild(el);
+                    }
+                } else if (el.tagName === 'TEXTAREA') {
                     el.classList.add('textarea');
-                }
+                } else { el.classList.add('input'); }
             });
-            // A lógica de envolver o <select> foi removida pois agora é tratada no HTML do template.
         }
-
-        // JavaScript para fechar notificações
-        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-            const $notification = $delete.parentNode;
-            $delete.addEventListener('click', () => {
-                $notification.parentNode.removeChild($notification);
-            });
-        });
     });
 </script>
 {% endblock extra_js %}

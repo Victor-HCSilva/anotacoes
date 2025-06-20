@@ -15,6 +15,10 @@ class Agenda:
         self.request = request
 
     def agenda(self, id_user, ano=None, mes=None):
+        #Caso não seja o mesmo usuario
+        if self.request.user.id != id_user:
+            return redirect('login')
+
         form = AgendaForm(self.request.POST)
         user = get_object_or_404(User, id=id_user)
 
@@ -70,6 +74,10 @@ class Configs:
 
 
     def configs(self, id_user: int):
+        #Caso não seja o mesmo usuario
+        if self.request.user.id != id_user:
+            return redirect('login')
+
         form = ColorForm(self.request.POST)
         user = get_object_or_404(User, id=id_user)
         context = {
@@ -98,21 +106,29 @@ class DeleteOrEditEvent():
 
 
     def delete_event(self, id_user: int, id_event):
+        #Caso não seja o mesmo usuario
+        if self.request.user.id != id_user:
+            return redirect('login')
+
         evento = get_object_or_404(AgendaModel, id=id_event)
         user = get_object_or_404(User, id=id_user)
         context = {
-            "nada":"nada",
             "user":user,
+            "evento":evento,
         }
 
         if self.request.method == "POST":
             evento.delete()
             return redirect("agenda", id_user=id_user)
 
-        return render(self.request, "delete.html", context)
+        return render(self.request, "delete_event.html", context)
 
 
     def edit_event(self, id_user: int, id_event: int):
+        #Caso não seja o mesmo usuario
+        if self.request.user.id != id_user:
+            return redirect('login')
+
         evento = get_object_or_404(AgendaModel, id=id_event)
         user = get_object_or_404(User, id=id_user)
 
