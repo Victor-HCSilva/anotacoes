@@ -7,7 +7,6 @@ from .models import Todo
 from django.contrib.auth import logout
 
 
-@login_required()
 def login_user(request):
     if request.method == "POST":
         username = request.POST.get("username")
