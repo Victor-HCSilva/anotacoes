@@ -31,8 +31,9 @@ class Todo(models.Model):
     completo = models.BooleanField(
         default=False
     )
-    anotacao = models.CharField(
-        max_length=50000
+    anotacao = models.TextField(
+        ("Anotação"),
+        default="Escreva algo aqui!"
     )
     prioridade = models.CharField(
         choices=PRIORIDADES,

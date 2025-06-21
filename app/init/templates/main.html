@@ -36,8 +36,6 @@
             </h1>
             {% if user.is_authenticated %}
             <p class="subtitle is-5 has-text-grey">Gerencie suas anotações abaixo.</p>
-            {% else %}
-            <p class="subtitle is-5 has-text-grey">Faça login para ver e adicionar suas anotações.</p>
             {% endif %}
         </div>
 
@@ -77,12 +75,14 @@
                             <span>Adicionar Anotação</span>
                         </button>
                     </div>
+                    {% comment %}
                     <div class="control">
                         <a class="button is-link is-light" href="{% url 'anotacoes' id_user=user.id %}">
                            <span class="icon"><i class="fas fa-list-ul"></i></span>
                            <span>Ver Todas</span>
                        </a>
                    </div>
+                    {% endcomment %}
                 </div>
             </form>
         </div>
