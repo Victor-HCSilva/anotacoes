@@ -8,6 +8,7 @@ from django.http import HttpRequest
 import datetime
 from django.contrib.auth.decorators import login_required
 
+
 @login_required()
 def agenda(request: HttpRequest, id_user, ano=None, mes=None):
     agenda = Agenda(request)

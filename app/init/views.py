@@ -72,6 +72,7 @@ def sobre(request):
     user = get_object_or_404(User, id=request.user.id)
     return render(request, "sobre.html",{"user":user})
 
+
 def logout_(request):
     logout(request)
     return redirect("login")

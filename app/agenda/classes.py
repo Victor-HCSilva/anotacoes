@@ -85,7 +85,6 @@ class Configs:
             "user":user,
         }
 
-
         if self.request.method == "POST":
             if form.is_valid():
                 config = form.save(commit=False)
