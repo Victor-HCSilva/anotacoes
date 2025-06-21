@@ -6,27 +6,41 @@
 
 {% block extra_css %}
 <style>
-    /* Estilos centralizados e simplificados para o calendário */
+    /* =================================================================== */
+    /* === MELHORIA 1: ESTILOS MOBILE-FIRST (Padrão para telas pequenas) === */
+    /* =================================================================== */
+    .calendar-container {
+        overflow-x: auto; /* Permite rolar o calendário horizontalmente se ele for muito largo */
+    }
     .table.calendar {
         table-layout: fixed;
         background-color: #2a2a2a;
+        min-width: 100%; /* Garante que o calendário ocupe o espaço */
     }
     .table.calendar th {
         color: #ffffff;
         background-color: #1e1e1e;
         text-align: center;
+        padding: 0.5em 0.2em; /* Padding menor para mobile */
+        font-size: 0.8rem;
     }
     .table.calendar td {
         border: 1px solid #4a4a4a;
-        height: 120px;
+        height: 10vh; /* MELHORIA: Altura flexível baseada na altura da tela */
         vertical-align: top;
-        padding: 0.5em;
+        padding: 0.25em;
         transition: background-color 0.2s ease-in-out;
     }
     .table.calendar td:hover {
         background-color: #383838;
     }
     .is-empty { background-color: #222222 !important; cursor: default; }
+
+    .day-number {
+        font-size: 0.85rem;
+        display: inline-block;
+        padding: 0.2em;
+    }
     .is-today .day-number {
         background-color: #3273dc;
         color: white;
@@ -38,99 +52,84 @@
         justify-content: center;
         font-weight: bold;
     }
-    .has-events { background-color: {{ cor_de_destaque|default:'#363636' }}; }
+
+    /* MELHORIA: Esconder o título do evento em telas pequenas */
     .event-title {
-        display: block;
-        font-size: 0.8rem;
-        padding: 2px 5px;
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-        margin-top: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        border-left: 3px solid {{ cor_de_destaque|default:'blue' }};
+        display: none;
     }
-    .destaque{
-        color: red;
+
+    /* MELHORIA: Mostrar um ponto indicador de evento em telas pequenas */
+    .event-indicator {
+        display: block;
+        height: 6px;
+        width: 6px;
+        border-radius: 50%;
+        background-color: {{ cor_de_destaque|default:'#3273dc' }};
+        margin: 4px auto 0;
+    }
+
+    /* =================================================================== */
+    /* === MELHORIA 2: ESTILOS PARA TELAS MAIORES (TABLET E DESKTOP) === */
+    /* =================================================================== */
+    @media screen and (min-width: 769px) {
+        .table.calendar th {
+            font-size: 1rem;
+            padding: 0.75em;
+        }
+        .table.calendar td {
+            height: 120px; /* Altura fixa para desktop, como estava antes */
+            padding: 0.5em;
+        }
+        .day-number {
+            font-size: 1rem;
+        }
+        /* Esconde o ponto indicador no desktop */
+        .event-indicator {
+            display: none;
+        }
+        /* Mostra o título completo do evento no desktop */
+        .event-title {
+            display: block;
+            font-size: 0.8rem;
+            padding: 2px 5px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-left: 3px solid {{ cor_de_destaque|default:'blue' }};
+            color: #ccc; /* MELHORIA: Cor movida do style inline para cá */
+        }
     }
 </style>
 {% endblock extra_css %}
 
 {% block content %}
 
-{# --- CORREÇÃO APLICADA AQUI: USANDO O COMPONENTE 'LEVEL' PARA ORGANIZAR O CABEÇALHO --- #}
-<div class="level mb-5">
-    {# Level Left: Título da Página #}
+{# O cabeçalho com o componente 'level' já é responsivo. Mantido. #}
+<div class="level is-mobile mb-5">
     <div class="level-left">
         <div class="level-item">
             <div>
-                <h1 style="color: gray;" class="title is-2">
+                {# MELHORIA: Removido style inline, usando classe de texto. #}
+                <h1 class="title is-2 has-text-grey">
                     <span class="icon mr-3"><i class="fas fa-calendar-alt fa-lg"></i></span>
-                    Agenda: {{ nome_mes }} {{ ano }}
+                    Agenda
                 </h1>
             </div>
         </div>
     </div>
-    {# Level Right: Botões de Navegação e Ação #}
     <div class="level-right">
         <div class="level-item">
-            <div class="buttons">
-                <a class="button is-light" href="{% url 'anotacoes' id_user=user.id %}">
-                    <span class="icon"><i class="fas fa-clipboard-list"></i></span>
-                    <span>Anotações</span>
-                </a>
-                <a class="button" href="{% url 'configs' id_user=user.id %}">
-                    <span class="icon"><i class="fas fa-cog"></i></span>
-                    <span>Configurações</span>
-                </a>
-            </div>
+            <p class="title is-4 has-text-white">{{ nome_mes }} {{ ano }}</p>
         </div>
     </div>
 </div>
 
-<div class="columns">
-    {# COLUNA DA ESQUERDA: CALENDÁRIO VISUAL #}
-    <div class="column is-two-thirds">
-        <div class="box has-background-black-bis p-4">
-            <table class="table is-bordered is-fullwidth calendar">
-                <thead>
-                    <tr>
-                        {% for dia_semana in dias_semana %}
-                            <th>{{ dia_semana }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for semana in mes_dias %}
-                    <tr>
-                        {% for dia in semana %}
-                            {% if dia == 0 %}
-                                <td class="is-empty"></td>
-                            {% else %}
-                                <td
-                                    style="color: white;"
-                                    class="
-                                    {% if dia == dia_atual and mes == mes_atual and ano == ano_atual %}is-today{% endif %}
-                                    {% if dia in eventos_por_dia %}has-events{% endif %}">
-                                    <span class="day-number">{{ dia }}</span>
-                                    {% if dia in eventos_por_dia %}
-                                        {% for titulo in eventos_por_dia|get_item:dia %}
-                                            <span style="color: rgb(100,100,200);" class="event-title">{{ titulo }}</span>
-                                        {% endfor %}
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    {# COLUNA DA DIREITA: FORMULÁRIO E LISTA DE EVENTOS #}
-    <div class="column">
+<div class="columns is-flex-direction-row-reverse">
+    {# COLUNA DA DIREITA (Agora à esquerda no código): FORMULÁRIO E LISTA #}
+    <div class="column is-one-third">
         <div class="box has-background-black-bis mb-5">
             <h3 class="title is-4">Adicionar Evento</h3>
             <form method="POST">
@@ -153,7 +152,6 @@
                 </div>
             </form>
         </div>
-
         <div class="box has-background-black-bis">
              <h3 class="title is-4">Eventos em {{ nome_mes }}</h3>
              {% for evento in eventos_do_mes %}
@@ -174,12 +172,55 @@
              {% endfor %}
         </div>
     </div>
+
+    {# COLUNA DA ESQUERDA (Agora à direita no código): CALENDÁRIO VISUAL #}
+    <div class="column is-two-thirds">
+        <div class="box has-background-black-bis p-2 p-4-tablet">
+            <div class="calendar-container">
+                <table class="table is-bordered is-fullwidth calendar">
+                    <thead>
+                        <tr>
+                            {% for dia_semana in dias_semana %}
+                                <th>{{ dia_semana }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for semana in mes_dias %}
+                        <tr>
+                            {% for dia in semana %}
+                                {% if dia == 0 %}
+                                    <td class="is-empty"></td>
+                                {% else %}
+                                    <td class="
+                                        has-text-white
+                                        {% if dia == dia_atual and mes == mes_atual and ano == ano_atual %}is-today{% endif %}
+                                        {% if dia in eventos_por_dia %}has-events{% endif %}">
+                                        <span class="day-number">{{ dia }}</span>
+                                        {% if dia in eventos_por_dia %}
+                                            {# MELHORIA: Mostra o título no desktop e um ponto no mobile #}
+                                            <span class="event-indicator"></span>
+                                            {% for titulo in eventos_por_dia|get_item:dia %}
+                                                <span class="event-title">{{ titulo }}</span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}
 
 
 {% block extra_js %}
+{# O script para estilizar o formulário já é excelente. Mantido. #}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('form');

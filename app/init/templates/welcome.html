@@ -1,18 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Início - Meu App{% endblock title %}
-
-{% block extra_css %}
-{# Nenhum estilo extra é necessário aqui. Os estilos de botão e texto já vêm do Bulma e do tema escuro. #}
-{% endblock extra_css %}
+{% block title %}Início - Brain{% endblock title %}
 
 {% block content %}
 {# ========================================================================= #}
-{# === Como nas outras páginas, o conteúdo vai direto para o bloco 'content'. #}
-{# === O base.html já coloca isso dentro da área principal da aplicação.   === #}
+{# === Bloco de boas-vindas: já estava bem estruturado com Bulma.        === #}
 {# ========================================================================= #}
-
 <div class="box has-background-black-bis has-text-centered">
     <h1 class="title is-2 has-text-weight-light">
         O que vai fazer hoje, <strong class="has-text-white">{{ user.username }}</strong>?
@@ -21,7 +15,7 @@
         Escolha uma das opções abaixo para começar suas atividades.
     </p>
 
-    {# Usar a classe 'buttons' e 'is-centered' para alinhar e espaçar os botões corretamente #}
+    {# Os botões já usam boas práticas do Bulma. #}
     <div class="buttons is-centered are-large mt-5">
         <a class="button is-primary" href="{% url 'main' id_user=user.id %}">
             <span class="icon">
@@ -38,25 +32,42 @@
     </div>
 </div>
 
-{# Você pode adicionar mais conteúdo aqui, como um resumo rápido ou estatísticas #}
-<div class="box has-background-black-bis mt-5">
-    <h3 style="color:rgb(200,200,200)" class="title is-4">Algumas  de suas anotações</h3>
 
-{% for todo in todos %}
-    {# forloop.counter0 é o contador que começa em 0 (0, 1, 2, 3...) #}
-    {% if forloop.counter0 <= 3 %}
-        <hr>
-        <a class="is-link" href="{% url 'show' id_user=user.id id_anotacao=todo.id%}">
-            <p>{{ todo.titulo }}</p>
+{# ========================================================================= #}
+{# === MELHORIA: Bloco de anotações recentes.                            === #}
+{# ========================================================================= #}
+<div class="panel has-background-black-bis mt-5">
+
+    <p class="panel-heading has-background-black-ter has-text-grey-light">
+        Suas Anotações Mais Recentes
+    </p>
+
+    {% for todo in todos|slice:":4" %}
+        <a class="panel-block" href="{% url 'show' id_user=user.id id_anotacao=todo.id%}">
+            <span class="panel-icon">
+              <i class="fas fa-book" aria-hidden="true"></i>
+            </span>
+            {{ todo.titulo }}
         </a>
-        <hr>
-    {% endif %}
-{% endfor %}
-    <!-- Exemplo de conteúdo futuro -->
+    {% empty %}
+        {# ========================================================================= #}
+        {# === MELHORIA APLICADA AQUI: Tratamento do estado vazio com um botão claro. #}
+        {# ========================================================================= #}
+        <div class="panel-block">
+            <div class="content has-text-centered" style="width: 100%;">
+                <p class="has-text-grey mb-3">
+                    Você ainda não tem nenhuma anotação.
+                </p>
+                {# Este é um botão real, consistente com o design, porém menor. #}
+                <a href="{% url 'main' id_user=user.id %}" class="button is-primary is-small">
+                    <span class="icon is-small">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    <span>Criar a primeira</span>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
 </div>
 
 {% endblock content %}
-
-{% block extra_js %}
-{# Nenhum JavaScript específico é necessário para esta página. #}
-{% endblock extra_js %}
