@@ -37,11 +37,11 @@
     <div class="level-right">
         <div class="level-item">
             <div class="buttons">
-                <a class="button is-primary" href="{% url 'main' id_user=user.id %}">
+                <a class="button is-primary" href="{% url 'main:main' id_user=user.id %}">
                     <span class="icon"><i class="fas fa-plus"></i></span>
                     <span>Nova Anotação</span>
                 </a>
-        <a class="button is-link" href="{% url 'agenda' id_user=user.id %}">
+        <a class="button is-link" href="{% url 'agenda:agenda' id_user=user.id %}">
             <span class="icon"><i class="fas fa-calendar-alt"></i></span>
             <span>Agenda</span>
         </a>
@@ -116,9 +116,9 @@
                         </div>
                     </div>
                     <footer class="card-footer">
-                        <a href="{% url 'show' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item">Ver</a>
-                        <a href="{% url 'editar' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item">Editar</a>
-                        <a href="{% url 'remover' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item has-text-danger">Apagar</a>
+                        <a href="{% url 'main:show' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item">Ver</a>
+                        <a href="{% url 'main:editar' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item">Editar</a>
+                        <a href="{% url 'main:remover' id_user=user.id id_anotacao=anotacao_item.id %}" class="card-footer-item has-text-danger">Apagar</a>
                     </footer>
                 </div>
             </div>
@@ -129,7 +129,7 @@
         <span class="icon is-large has-text-grey-light"><i class="fas fa-folder-open fa-3x"></i></span>
         <h2 class="title is-4 mt-4">Nenhuma anotação encontrada</h2>
         <p class="subtitle is-6">Que tal criar a sua primeira agora mesmo?</p>
-        <a class="button is-primary is-medium mt-4" href="{% url 'main' id_user=user.id %}">
+        <a class="button is-primary is-medium mt-4" href="{% url 'main:main' id_user=user.id %}">
             <span class="icon"><i class="fas fa-plus"></i></span>
             <span>Criar Primeira Anotação</span>
         </a>

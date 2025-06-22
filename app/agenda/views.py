@@ -2,7 +2,8 @@ from django.shortcuts import render
 from .classes import (
     Agenda,
     Configs,
-    DeleteOrEditEvent
+    DeleteOrEditEvent,
+    Eventos
 )
 from django.http import HttpRequest
 import datetime
@@ -19,6 +20,12 @@ def agenda(request: HttpRequest, id_user, ano=None, mes=None):
 def configs_(request: HttpRequest, id_user: int):
     configs = Configs(request=request)
     return configs.configs(id_user=id_user)
+
+
+@login_required()
+def eventos_(request: HttpRequest, id_user:int):
+    eventos = Eventos(request=request)
+    return edit_event.eventos_(id_user=id_user)
 
 
 @login_required()

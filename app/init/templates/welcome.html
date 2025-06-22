@@ -17,13 +17,13 @@
 
     {# Os botões já usam boas práticas do Bulma. #}
     <div class="buttons is-centered are-large mt-5">
-        <a class="button is-primary" href="{% url 'main' id_user=user.id %}">
+        <a class="button is-primary" href="{% url 'main:main' id_user=user.id %}">
             <span class="icon">
                 <i class="fas fa-pen-alt"></i>
             </span>
             <span>Criar uma Anotação</span>
         </a>
-        <a class="button is-link" href="{% url 'agenda' id_user=user.id %}">
+        <a class="button is-link" href="{% url 'agenda:agenda' id_user=user.id %}">
             <span class="icon">
                 <i class="fas fa-calendar-alt"></i>
             </span>
@@ -43,7 +43,7 @@
     </p>
 
     {% for todo in todos|slice:":4" %}
-        <a class="panel-block" href="{% url 'show' id_user=user.id id_anotacao=todo.id%}">
+        <a class="panel-block" href="{% url 'main:show' id_user=user.id id_anotacao=todo.id%}">
             <span class="panel-icon">
               <i class="fas fa-book" aria-hidden="true"></i>
             </span>

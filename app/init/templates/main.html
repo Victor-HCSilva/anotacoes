@@ -36,7 +36,7 @@
             </h1>
             {% if user.is_authenticated %}
             <p class="subtitle is-5 has-text-grey">Gerencie suas anotações abaixo.</p>
-            {% endif %}
+        {% endif %}
         </div>
 
         {% if user.is_authenticated %}
@@ -96,15 +96,15 @@
                     <div class="message-header">
                     <p>{{ todo.titulo|truncatewords:10}}</p>
                         <div class="buttons are-small">
-                            <a class="button is-info is-outlined" href="{% url 'show' id_user=user.id id_anotacao=todo.id %}">
+                            <a class="button is-info is-outlined" href="{% url 'main:show' id_user=user.id id_anotacao=todo.id %}">
                                 <span class="icon"><i class="fas fa-eye"></i></span>
                                 <!-- <span>Detalhes</span> -->
                             </a>
-                            <a class="button is-warning is-outlined" href="{% url 'editar' id_user=user.id id_anotacao=todo.id %}">
+                            <a class="button is-warning is-outlined" href="{% url 'main:editar' id_user=user.id id_anotacao=todo.id %}">
                                 <span class="icon"><i class="fas fa-edit"></i></span>
                                 <!-- <span>Editar</span> -->
                             </a>
-                            <a class="button is-danger is-outlined" href="{% url 'remover' id_user=user.id id_anotacao=todo.id %}">
+                            <a class="button is-danger is-outlined" href="{% url 'main:remover' id_user=user.id id_anotacao=todo.id %}">
                                 <span class="icon"><i class="fas fa-trash"></i></span>
                                 <!-- <span>Apagar</span> -->
                             </a>
@@ -118,7 +118,7 @@
                 </article>
             {% endfor %}
             <div class="has-text-centered mt-4">
-                 <a class="button is-link" href="{% url 'anotacoes' id_user=user.id %}">
+                 <a class="button is-link" href="{% url 'main:anotacoes' id_user=user.id %}">
                     <span class="icon"><i class="fas fa-th-list"></i></span>
                     <span>Ver Todas as Anotações</span>
                 </a>

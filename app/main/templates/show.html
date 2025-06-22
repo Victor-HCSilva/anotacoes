@@ -42,10 +42,10 @@
 
             {# Menu de Ações Acima #}
             <div class="buttons actions-menu is-centered-mobile">
-                <a class="button is-light" href="{% url 'anotacoes' id_user=user.id %}"><span class="icon"><i class="fas fa-arrow-left"></i></span><span>Voltar</span></a>
-                <a class="button is-info" href="{% url 'main' id_user=user.id %}"><span class="icon"><i class="fas fa-plus"></i></span><span>Nova</span></a>
-                <a class="button is-warning" href="{% url 'editar' id_user=user.id id_anotacao=tarefa.id %}"><span class="icon"><i class="fas fa-edit"></i></span><span>Atualizar</span></a>
-                <a class="button is-danger" href="{% url 'remover' id_user=user.id id_anotacao=tarefa.id %}" onclick="return confirm('Tem certeza?');"><span class="icon"><i class="fas fa-trash"></i></span><span>Deletar</span></a>
+                <a class="button is-light" href="{% url 'main:anotacoes' id_user=user.id %}"><span class="icon"><i class="fas fa-arrow-left"></i></span><span>Voltar</span></a>
+                <a class="button is-info" href="{% url 'main:main' id_user=user.id %}"><span class="icon"><i class="fas fa-plus"></i></span><span>Nova</span></a>
+                <a class="button is-warning" href="{% url 'main:editar' id_user=user.id id_anotacao=tarefa.id %}"><span class="icon"><i class="fas fa-edit"></i></span><span>Atualizar</span></a>
+                <a class="button is-danger" href="{% url 'main:remover' id_user=user.id id_anotacao=tarefa.id %}" onclick="return confirm('Tem certeza?');"><span class="icon"><i class="fas fa-trash"></i></span><span>Deletar</span></a>
             </div>
 
             <div class="box detail-box has-background-black-bis">
@@ -89,10 +89,10 @@
                             </div>
                             <div class="level-right">
                                 <div class="buttons are-small">
-                                    <a class="button is-light is-outlined" href="{% url 'editar_descricao' id_user=user.id id_imagem=img.id id_anotacao=tarefa.id %}">
+                                    <a class="button is-light is-outlined" href="{% url 'main:editar_descricao' id_user=user.id id_imagem=img.id id_anotacao=tarefa.id %}">
                                         <span class="icon"><i class="fas fa-pen"></i></span>
                                     </a>
-                                    <a class="button is-danger is-outlined" href="{% url 'apagar_imagem' id_user=user.id id_imagem=img.id id_anotacao=tarefa.id %}" onclick="return confirm('Apagar esta imagem?');">
+                                    <a class="button is-danger is-outlined" href="{% url 'main:apagar_imagem' id_user=user.id id_imagem=img.id id_anotacao=tarefa.id %}" onclick="return confirm('Apagar esta imagem?');">
                                         <span class="icon"><i class="fas fa-times"></i></span>
                                     </a>
                                 </div>

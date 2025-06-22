@@ -50,7 +50,7 @@
                 {% csrf_token %}
                 <div class="field is-grouped is-grouped-centered">
                     <div class="control">
-                        <a class="button is-light is-medium" href="{% url 'show' id_user=user.id id_anotacao=tarefa.id%}">
+                        <a class="button is-light is-medium" href="{% url 'main:show' id_user=user.id id_anotacao=tarefa.id%}">
                             <span class="icon"><i class="fas fa-times"></i></span>
                             <span>Cancelar</span>
                         </a>

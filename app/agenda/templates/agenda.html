@@ -120,18 +120,19 @@
             </div>
         </div>
     </div>
-    <div class="level-right">
-        <div class="level-item">
-            <p class="title is-4 has-text-white">{{ nome_mes }} {{ ano }}</p>
-        </div>
-    </div>
 </div>
 
 <div class="columns is-flex-direction-row-reverse">
     {# COLUNA DA DIREITA (Agora à esquerda no código): FORMULÁRIO E LISTA #}
     <div class="column is-one-third">
         <div class="box has-background-black-bis mb-5">
-            <h3 class="title is-4">Adicionar Evento</h3>
+            <a href="{% url 'main:anotacoes' id_user=user.id%}">
+              <button class="button is-primary">Anotações</button>
+            </a>
+            <a href="{% url 'agenda:configs' id_user=user.id%}">
+              <button class="button is-link">Configurações</button>
+            </a>
+            <h3 style="color:white;" class="title is-4">Adicionar Evento</h3>
             <form method="POST">
                 {% csrf_token %}
                 {% for field in form %}
@@ -151,25 +152,6 @@
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="box has-background-black-bis">
-             <h3 class="title is-4">Eventos em {{ nome_mes }}</h3>
-             {% for evento in eventos_do_mes %}
-                <article class="media">
-                    <div class="media-content">
-                        <p><strong>{{ evento.titulo }}</strong><br><small class="has-text-grey">{{ evento.data|date:"d/m/Y H:i" }}</small></p>
-                    </div>
-                    <div class="media-right">
-                        <div class="buttons are-small">
-                            <a class="button is-light is-outlined" href="{% url 'editar_evento' id_user=user.id id_event=evento.id %}"><span class="icon"><i class="fas fa-edit"></i></span></a>
-                            <a class="button is-danger is-outlined" href="{% url 'deletar_evento' id_user=user.id id_event=evento.id %}"><span class="icon"><i class="fas fa-trash"></i></span></a>
-                        </div>
-                    </div>
-                </article>
-                {% if not forloop.last %}<hr class="my-3">{% endif %}
-             {% empty %}
-                <p class="has-text-grey has-text-centered py-4">Nenhum evento para este mês.</p>
-             {% endfor %}
         </div>
     </div>
 

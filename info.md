@@ -1,9 +1,6 @@
 
 # Feature de agenda
-## Feature de cores (nova brach)
-- Estou criado a feature para a alteração de cor no css, no momenro não sei se funiona ou não
-
-## Feature de eventos com a agenda [Não iniciado]
+## Feature de eventos com a agenda [inciciado]
 - Apenas uma simples organização com notas dos eventos de cada dia
 
 ## Mensageria para agenda e anotações [Não iniciado]
@@ -56,3 +53,17 @@ tarefa ou evento importante.
 - Penso em retirar a frase no quadro e deizar apenas em baixo mesmo
 - Conforme a prioridade a cor do quadrado, com a indicação de cores acima,
 talvez até combinações de cores de personalização
+- Adiçãop dos enpoints (não testados de editar e deletar)
+
+### Resultados do dia 21/06/2025:
+- Quero testar o endpoint de eventos, lembre que a ordem é arquivo classes.py -> views.py -> urls.py.
+Pode ser o endpoint eventos ou apenas uma vizualizaço na pagina agenda mesmo.
+- Lembre das configurações e que todos os endpoints são definidos com <app>:<nome_do_endpoint>
+- Com a configuração `app_name`
+- O css no tela agenda está com defeito
+- O app init não possui urlsm todas suas funcionalidade são passadas ào app main
+- as configurações estão no arquivo .env, presente no git, retire, o push ainda não foi feito
+- Existem configurações de rotas de login no arquivo settigs.py, bém no início
+- O banco de dados é o MySQL
+
+![imagem log 1](img-4.png)

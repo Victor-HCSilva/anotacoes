@@ -10,7 +10,7 @@ from . import utils
 @login_required
 def anotacoes(request, id_user):
     if request.user.id != id_user:
-        return redirect('login')
+        return redirect('main:login')
 
     todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
     prazos = {}
@@ -52,7 +52,7 @@ def show(request, id_user,id_anotacao):
     form = ImageForm()
 
     if request.user.id != id_user:
-        return redirect("login")
+        return redirect("main:login")
     task = get_object_or_404(Todo, id=id_anotacao)
     user = get_object_or_404(User, id=id_user)
 
@@ -84,14 +84,14 @@ def editar(request, id_user, id_anotacao):
 
     #Consertar com o login_required
     if request.user.id != id_user:
-        return redirect('login')
+        return redirect('main:login')
 
     if request.method == "POST":
         form = TodoForm(request.POST, instance=todo)
         todo = form.save(commit=False)
         todo.user = user
         todo.save()
-        return redirect("anotacoes", id_user=id_user)
+        return redirect("main:anotacoes", id_user=id_user)
     else:
         print(form.errors)
 
@@ -113,11 +113,11 @@ def remover(request, id_user, id_anotacao):
 
     #Consertar com o login_required
     if request.user.id != id_user:
-        return redirect('login')
+        return redirect('main:login')
 
     if request.method == "POST":
         todo.delete()
-        return redirect("anotacoes", id_user=id_user)
+        return redirect("main:anotacoes", id_user=id_user)
     else:
         print(form.errors)
         return render (request, "delete.html", {"user":user, "tarefa":todo})
@@ -133,11 +133,11 @@ def apagar_imagem(request, id_user, id_imagem,id_anotacao):
 
     #Consertar com o login_required
     if request.user.id != id_user:
-        return redirect('login')
+        return redirect('main:login')
 
     if request.method == "POST":
         image.delete()
-        return redirect("show", id_user=id_user, id_anotacao=id_anotacao)
+        return redirect("main:show", id_user=id_user, id_anotacao=id_anotacao)
     else:
         print(form.errors)
     return render (request, "apagar_imagem.html", {"user":user, "imagem":image, "tarefa":todo})
@@ -152,14 +152,14 @@ def editar_descricao(request, id_user, id_imagem, id_anotacao):
 
     #Consertar com o login_required
     if request.user.id != id_user:
-        return redirect('login')
+        return redirect('main:login')
 
     if request.method == "POST":
         image = form.save(commit=False)
         image.user = todo
         image.save()
 
-        return redirect("show", id_user=id_user, id_anotacao=id_anotacao)
+        return redirect("main:show", id_user=id_user, id_anotacao=id_anotacao)
     else:
         print(form.errors)
 
