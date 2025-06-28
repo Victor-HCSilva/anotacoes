@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load static %}
+
+{% block title %}Agenda - {{ nome_mes }} {{ ano }}{% endblock title %}
+
+{% block extra_css %}
+<style>
+    /* Define a cor do usuário como uma variável CSS para reuso fácil */
+    :root {
+        --cor-destaque-usuario: {{ cor_de_destaque|default:'#3273dc' }};
+    }
+
+    /* =================================================================== */
+    /* === ESTILOS GERAIS E MOBILE-FIRST === */
+    /* =================================================================== */
+    .calendar-container {
+        overflow-x: auto;
+    }
+    .table.calendar {
+        table-layout: fixed;
+        background-color: #2a2a2a;
+        min-width: 100%;
+    }
+    .table.calendar th {
+        color: #ffffff;
+        background-color: #1e1e1e;
+        text-align: center;
+        padding: 0.5em 0.2em;
+        font-size: 0.8rem;
+    }
+    .table.calendar td {
+        border: 1px solid #4a4a4a;
+        height: 12vh;
+        vertical-align: top;
+        padding: 0.35em;
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        overflow-y: auto;
+    }
+    .is-empty { background-color: #222222 !important; cursor: default; }
+
+    /* =================================================================== */
+    /* === LÓGICA DE DESTAQUE (NOVA VERSÃO MELHORADA) === */
+    /* =================================================================== */
+    .day-number {
+        font-size: 0.85rem;
+        display: inline-flex; /* Alterado para flex para alinhar melhor */
+        align-items: center;
+        justify-content: center;
+        padding: 0.2em;
+        margin-bottom: 5px;
+        border-radius: 50%; /* Prepara para ser um círculo */
+        width: 1.8em;
+        height: 1.8em;
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* 1. Destaque para dias com eventos */
+    .has-events {
+        /* Fundo da célula mais forte */
+        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 20%, #2a2a2a);
+    }
+    /* Estilo para o NÚMERO do dia com evento */
+    .has-events .day-number {
+        /* Adiciona um anel/borda em volta do número */
+        box-shadow: inset 0 0 0 2px var(--cor-destaque-usuario);
+        font-weight: bold;
+        color: #fff;
+    }
+    .table.calendar td.has-events:hover {
+        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 30%, #2a2a2a);
+    }
+
+    /* 2. Destaque para o dia ATUAL (sobrescreve o estilo de .has-events se necessário) */
+    .is-today .day-number {
+        /* Círculo sólido, mais forte que o anel */
+        background-color: var(--cor-destaque-usuario);
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 0 8px color-mix(in srgb, var(--cor-destaque-usuario) 50%, transparent); /* Adiciona um brilho */
+    }
+
+    /* === LÓGICA DE EXIBIÇÃO DOS EVENTOS === */
+    .events-list { display: none; }
+    .event-indicator {
+        display: block;
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        background-color: var(--cor-destaque-usuario);
+        margin: 5px auto 0;
+    }
+
+    #id_descricao { max-width: 100%; max-height: 10vh; }
+
+    /* =================================================================== */
+    /* === ESTILOS PARA TELAS MAIORES (TABLET E DESKTOP) === */
+    /* =================================================================== */
+    @media screen and (min-width: 769px) {
+        .table.calendar td { height: 140px; }
+
+        .event-indicator { display: none; }
+        .events-list { display: block; }
+
+        .event-title {
+            font-size: 0.75rem;
+            padding: 2px 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #ddd;
+            border-left: 3px solid var(--cor-destaque-usuario); /* Adiciona a borda também no evento */
+        }
+    }
+    .button { padding: 2px !important; }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="level is-mobile mb-5">
+    <div class="level-left">
+        <div class="level-item">
+            <div>
+                <h1 class="title is-2 has-text-grey">
+                    <span class="icon mr-3"><i class="fas fa-calendar-alt fa-lg"></i></span>
+                    Agenda
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="columns is-flex-direction-row-reverse">
+    {# COLUNA DA DIREITA: FORMULÁRIO E LISTA #}
+    <div class="column is-one-third">
+        <div class="box has-background-black-bis mb-5">
+            <a href="{% url 'agenda:configs' id_user=user.id%}">
+              <button class="button is-dark">Configurações</button>
+            </a>
+            <a href="{% url 'agenda:eventos' id_user=user.id%}">
+              <button class="button is-dark">Eventos</button>
+            </a>
+            <h3 style="color:white;" class="title is-4 mt-4">Adicionar Evento</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="field">
+                        <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <div class="control">{{ field }}</div>
+                        {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                        {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="field mt-4">
+                    <div class="control">
+                        <button type="submit" class="button is-success is-fullwidth">
+                            <span class="icon"><i class="fas fa-save"></i></span>
+                            <span>Salvar Evento</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {# COLUNA DA ESQUERDA: CALENDÁRIO VISUAL #}
+    <div class="column is-two-thirds">
+        <div class="box has-background-black-bis p-2 p-4-tablet">
+            <div class="calendar-container">
+                <table class="table is-bordered is-fullwidth calendar">
+                    <thead>
+                        <tr>
+                            {% for dia_semana in dias_semana %}
+                                <th>{{ dia_semana }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for semana in mes_dias %}
+                        <tr>
+                            {% for dia in semana %}
+                                {% if dia == 0 %}
+                                    <td class="is-empty"></td>
+                                {% else %}
+                                    <td class="
+                                        has-text-white
+                                        {% if dia == dia_atual and mes == mes_atual and ano == ano_atual %}is-today{% endif %}
+                                        {% if dia in eventos_por_dia %}has-events{% endif %}
+                                    ">
+                                        <span class="day-number">{{ dia }}</span>
+                                        {% if dia in eventos_por_dia %}
+                                            <span class="event-indicator"></span>
+                                            <div class="events-list">
+                                                {% for titulo in eventos_por_dia|get_item:dia %}
+                                                    <div class="event-title" title="{{ titulo }}">{{ titulo }}</div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        if (form) {
+            form.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type === 'checkbox' || el.type === 'radio') {}
+                else if (el.tagName === 'SELECT') {
+                    if (!el.parentElement.classList.contains('select')) {
+                        const selectWrapper = document.createElement('div');
+                        selectWrapper.className = 'select is-fullwidth';
+                        el.parentNode.insertBefore(selectWrapper, el);
+                        selectWrapper.appendChild(el);
+                    }
+                } else if (el.tagName === 'TEXTAREA') {
+                    el.classList.add('textarea');
+                } else { el.classList.add('input'); }
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}

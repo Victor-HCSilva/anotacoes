@@ -1,1 +1,5 @@
-./venv
+./.venv
+./.env
+./banco.db
+./core/__pycache__
+./app/.mypy_cache

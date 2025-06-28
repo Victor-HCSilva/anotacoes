@@ -1,0 +1,250 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meu App Django{% endblock title %}</title>
+
+    <!-- Frameworks e Ícones -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-dark@0.4.1/css/bulma-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- CSS customizado -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <style>
+        @media screen and (min-width: 1024px) {
+            .sidebar-column, .main-content-column {
+                height: 100vh;
+                overflow-y: auto;
+                /* Adicionamos uma transição suave para o redimensionamento */
+                transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+            }
+            html, body {
+                overflow: hidden;
+            }
+            .sidebar-column.is-hidden {
+                /* Garante que o menu escondido não ocupe espaço */
+                width: 0 !important;
+                padding: 0 !important;
+                overflow: hidden;
+            }
+        }
+        .menu-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid #4a4a4a;
+        }
+        .navbar-menu.is-active {
+            background-color: #363636;
+        }
+        .logout-button {
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            color: hsl(0, 0%, 86%); /* has-text-grey-light */
+            cursor: pointer;
+            text-align: left;
+            height: auto;
+            font-size: 1em;
+            display: block;
+            width: 100%;
+        }
+        .logout-button:hover {
+            color: hsl(0, 0%, 100%) !important; /* has-text-white */
+            background-color: transparent !important;
+        }
+        .white-link{
+            color: rgb(200,200,200) !important;
+        }
+        .white-link:hover{
+            color: rgb(0,0,0) !important;
+        }
+        /* Estilo para o botão de toggle do menu desktop */
+        #desktop-menu-toggle {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+        }
+        /*botoes do menu base*/
+        @media screen and (max-width: 720px) {
+        .menu-list > li > a, .button-exit, .name{
+            font-size: 1.2rem !important;
+            text-align: center !important;
+
+        }
+
+        .name{
+            font-size:1.3rem;
+            color: pink !important;
+        }
+        }
+    </style>
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+<body class="has-background-dark has-text-light-grey">
+
+    {% block body_wrapper %}
+    {# ========================================== #}
+    {# === MENU MOBILE (NAVBAR)               === #}
+    {# ========================================== #}
+    <nav class="navbar is-black is-hidden-desktop" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item has-text-white">
+                <span class="icon-text">
+                    <span class="icon is-medium"><i class="fas fa-rocket fa-lg"></i></span>
+                    <strong class="is-size-5 ml-2">Brain 🧠</strong>
+                </span>
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mobileMenu">
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="mobileMenu" class="navbar-menu">
+            <div class="navbar-start">
+                {% if user.is_authenticated %}
+                    <div style="color: black important!;" class="navbar-item has-text-grey-light name">Olá, {{ user.username }}</div>
+                    <div class="navbar-item">
+                        <form method="post" action="{% url 'main:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="white-link logout-button button-exit">Sair</button>
+                        </form>
+                    </div>
+                    <hr class="navbar-divider">
+                {% endif %}
+                <ul class="menu-list">
+                    <li><a class="white-link"  href="{% url 'main:sobre' %}">Sobre</a></li>
+                    <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
+                    <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="columns is-gapless">
+        {# ========================================== #}
+        {# === MENU LATERAL (DESKTOP)             === #}
+        {# ========================================== #}
+        <!-- NOVO: Adicionado id="desktopSidebar" -->
+        <div id="desktopSidebar" class="column is-2-desktop has-background-black-ter sidebar-column is-hidden-touch">
+            <div class="menu-logo">
+                <a href="{% url 'main:welcome' id_user=user.id %}" class="has-text-white">
+                    <span class="icon-text">
+                        <span class="icon is-medium"><i class="fas fa-rocket fa-lg"></i></span>
+                        <strong class="is-size-5 ml-2">Brain 🧠</strong>
+                    </span>
+                </a>
+            </div>
+            <aside class="menu p-4">
+                <p class="menu-label">Usuário</p>
+                <ul class="menu-list">
+                    {% if user.is_authenticated %}
+                        <li><div class="p-2 has-text-grey-light">Olá, {{ user.username }}</div></li>
+                        <li>
+                            <form method="post" action="{% url 'main:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="logout-button" style="padding: 0.5em 0.75em;">Sair</button>
+                            </form>
+                        </li>
+                    {% endif %}
+                </ul>
+                <p class="menu-label">Opções</p>
+                <ul class="menu-list">
+                    <li><a class="white-link" href="{% url 'main:sobre' %}">Sobre</a></li>
+                    <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
+                    <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
+                </ul>
+            </aside>
+        </div>
+
+        <!-- Coluna 2: Conteúdo Principal -->
+        <!-- NOVO: Adicionado id="mainContent" -->
+        <div id="mainContent" class="column is-10-desktop main-content-column">
+
+            <!-- NOVO: Botão para mostrar/esconder o menu no desktop -->
+            <a role="button" id="desktop-menu-toggle" class="button is-dark is-hidden-touch">
+                <span class="icon"><i class="fas fa-bars"></i></span>
+            </a>
+
+            <main class="section">
+                <div class="container is-fluid">
+                    {% block messages %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="notification is-{{ message.tags|default:'info' }} is-light mb-4">
+                                    <button class="delete"></button>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endblock messages %}
+
+                    {% block content %}
+                    <!-- Conteúdo padrão, será substituído pelos filhos -->
+                    {% endblock content %}
+                </div>
+            </main>
+            <footer class="footer has-background-black-ter">
+                <div class="content has-text-centered">
+                    <p>Para desoraganizados como eu ❤️| Victor Hugo</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    {% endblock body_wrapper %}
+
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Script para fechar notificações
+            (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                const $notification = $delete.parentNode;
+                $delete.addEventListener('click', () => {
+                    $notification.parentNode.removeChild($notification);
+                });
+            });
+
+            // Script para o menu hambúrguer do mobile
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+            if ($navbarBurgers.length > 0) {
+                $navbarBurgers.forEach( el => {
+                    el.addEventListener('click', () => {
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+                    });
+                });
+            }
+
+            // NOVO: Script para o menu lateral do desktop
+            const desktopToggle = document.getElementById('desktop-menu-toggle');
+            const desktopSidebar = document.getElementById('desktopSidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            if (desktopToggle && desktopSidebar && mainContent) {
+                desktopToggle.addEventListener('click', () => {
+                    // Esconde ou mostra a barra lateral
+                    desktopSidebar.classList.toggle('is-hidden');
+
+                    // Ajusta a largura da coluna de conteúdo principal
+                    mainContent.classList.toggle('is-10-desktop');
+                    mainContent.classList.toggle('is-12-desktop'); // is-12 ocupa a largura toda
+                });
+            }
+        });
+    </script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

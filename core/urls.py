@@ -6,8 +6,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("init.urls")),
-    path('', include("main.urls")),
+    path('', include("app.init.urls")),
+    path('main/', include("app.main.urls")),
+    path('agenda/', include("app.agenda.urls")),
 ]
 
 
