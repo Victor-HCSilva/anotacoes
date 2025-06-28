@@ -70,6 +70,19 @@
             left: 1rem;
             z-index: 20;
         }
+        /*botoes do menu base*/
+        @media screen and (max-width: 720px) {
+        .menu-list > li > a, .button-exit, .name{
+            font-size: 1.2rem !important;
+            text-align: center !important;
+
+        }
+
+        .name{
+            font-size:1.3rem;
+            color: pink !important;
+        }
+        }
     </style>
     {% block extra_css %}{% endblock extra_css %}
 </head>
@@ -94,11 +107,11 @@
         <div id="mobileMenu" class="navbar-menu">
             <div class="navbar-start">
                 {% if user.is_authenticated %}
-                    <div style="color: black important!;" class="navbar-item has-text-grey-light">Olá, {{ user.username }}</div>
+                    <div style="color: black important!;" class="navbar-item has-text-grey-light name">Olá, {{ user.username }}</div>
                     <div class="navbar-item">
                         <form method="post" action="{% url 'main:logout' %}">
                             {% csrf_token %}
-                            <button type="submit" class="white-link logout-button">Sair</button>
+                            <button type="submit" class="white-link logout-button button-exit">Sair</button>
                         </form>
                     </div>
                     <hr class="navbar-divider">

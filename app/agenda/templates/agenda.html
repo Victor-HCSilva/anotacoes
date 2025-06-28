@@ -8,7 +8,7 @@
 <style>
     /* Define a cor do usuário como uma variável CSS para reuso fácil */
     :root {
-        --cor-destaque-usuario: {{ cor_de_destaque|default:'#3273dc' }} !important;
+        --cor-destaque-usuario: {{ cor_de_destaque|default:'#3273dc' }};
     }
 
     /* =================================================================== */
@@ -34,43 +34,53 @@
         height: 12vh;
         vertical-align: top;
         padding: 0.35em;
-        transition: background-color 0.2s ease-in-out;
-        overflow-y: auto; /* Permite rolar dentro do dia se houver muitos eventos */
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        overflow-y: auto;
     }
     .is-empty { background-color: #222222 !important; cursor: default; }
 
-    /* === LÓGICA DE DESTAQUE === */
-    /* 1. Destaque para dias com eventos (afeta a célula inteira) */
-    .has-events {
-        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 15%, #2a2a2a);
-        border-left: 3px solid var(--cor-destaque-usuario);
-    }
-    .table.calendar td.has-events:hover {
-        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 25%, #2a2a2a);
-    }
-
-    /* 2. Destaque para o dia ATUAL (afeta apenas o número) */
+    /* =================================================================== */
+    /* === LÓGICA DE DESTAQUE (NOVA VERSÃO MELHORADA) === */
+    /* =================================================================== */
     .day-number {
         font-size: 0.85rem;
-        display: inline-block;
-        padding: 0.2em;
-        margin-bottom: 5px;
-    }
-    .is-today .day-number {
-        background-color: var(--cor-destaque-usuario);
-        color: white;
-        border-radius: 50%;
-        width: 1.8em;
-        height: 1.8em;
-        display: inline-flex;
+        display: inline-flex; /* Alterado para flex para alinhar melhor */
         align-items: center;
         justify-content: center;
+        padding: 0.2em;
+        margin-bottom: 5px;
+        border-radius: 50%; /* Prepara para ser um círculo */
+        width: 1.8em;
+        height: 1.8em;
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* 1. Destaque para dias com eventos */
+    .has-events {
+        /* Fundo da célula mais forte */
+        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 20%, #2a2a2a);
+    }
+    /* Estilo para o NÚMERO do dia com evento */
+    .has-events .day-number {
+        /* Adiciona um anel/borda em volta do número */
+        box-shadow: inset 0 0 0 2px var(--cor-destaque-usuario);
         font-weight: bold;
-        box-shadow: 0 0 5px rgba(0,0,0,0.5); /* Sombra para destacar sobre o fundo .has-events */
+        color: #fff;
+    }
+    .table.calendar td.has-events:hover {
+        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 30%, #2a2a2a);
+    }
+
+    /* 2. Destaque para o dia ATUAL (sobrescreve o estilo de .has-events se necessário) */
+    .is-today .day-number {
+        /* Círculo sólido, mais forte que o anel */
+        background-color: var(--cor-destaque-usuario);
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 0 8px color-mix(in srgb, var(--cor-destaque-usuario) 50%, transparent); /* Adiciona um brilho */
     }
 
     /* === LÓGICA DE EXIBIÇÃO DOS EVENTOS === */
-    /* Por padrão (mobile), esconde a lista e mostra o indicador */
     .events-list { display: none; }
     .event-indicator {
         display: block;
@@ -89,7 +99,6 @@
     @media screen and (min-width: 769px) {
         .table.calendar td { height: 140px; }
 
-        /* Inverte a visibilidade: mostra a lista e esconde o indicador */
         .event-indicator { display: none; }
         .events-list { display: block; }
 
@@ -103,6 +112,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             color: #ddd;
+            border-left: 3px solid var(--cor-destaque-usuario); /* Adiciona a borda também no evento */
         }
     }
     .button { padding: 2px !important; }
@@ -175,15 +185,12 @@
                                 {% if dia == 0 %}
                                     <td class="is-empty"></td>
                                 {% else %}
-                                    {# LÓGICA CENTRAL: Adiciona classes condicionalmente à célula #}
                                     <td class="
                                         has-text-white
                                         {% if dia == dia_atual and mes == mes_atual and ano == ano_atual %}is-today{% endif %}
                                         {% if dia in eventos_por_dia %}has-events{% endif %}
                                     ">
                                         <span class="day-number">{{ dia }}</span>
-
-                                        {# Se houver eventos, renderiza os elementos correspondentes #}
                                         {% if dia in eventos_por_dia %}
                                             <span class="event-indicator"></span>
                                             <div class="events-list">
@@ -204,7 +211,6 @@
     </div>
 </div>
 {% endblock content %}
-
 
 {% block extra_js %}
 <script>

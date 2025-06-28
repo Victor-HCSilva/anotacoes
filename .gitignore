@@ -1,3 +1,5 @@
 ./.venv
 ./.env
-./banco.md
+./banco.db
+./core/__pycache__
+./app/.mypy_cache
