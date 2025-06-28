@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 #Login
-LOGIN_URL = 'login'
+LOGIN_URL = 'main/login'
 LOGOUT_REDIRECT_URL = 'login'
 
 

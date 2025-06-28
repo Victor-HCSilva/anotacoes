@@ -11,7 +11,7 @@ urlpatterns = [
         template_name='login.html'
     ), name='login'),
 
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='main:login'), name='logout'),
 
     path('main/<int:id_user>', views_init.main, name="main"),
 
@@ -36,4 +36,6 @@ urlpatterns = [
 
     path("editar_descricao/<int:id_user>/<int:id_anotacao>/<int:id_imagem>",
          views.editar_descricao,name="editar_descricao"),
+
+    path("not_found", views.not_found,name="404"),
 ]

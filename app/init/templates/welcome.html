@@ -17,11 +17,17 @@
 
     {# Os botões já usam boas práticas do Bulma. #}
     <div class="buttons is-centered are-large mt-5">
-        <a class="button is-primary" href="{% url 'main:main' id_user=user.id %}">
+        <a class="button is-link" href="{% url 'main:main' id_user=user.id %}">
             <span class="icon">
                 <i class="fas fa-pen-alt"></i>
             </span>
             <span>Criar uma Anotação</span>
+        </a>
+        <a class="button is-primary" href="{% url 'agenda:eventos' id_user=user.id %}">
+            <span class="icon">
+  <i class="fas fa-check-square"></i>
+            </span>
+            <span>Seus eventos</span>
         </a>
         <a class="button is-link" href="{% url 'agenda:agenda' id_user=user.id %}">
             <span class="icon">

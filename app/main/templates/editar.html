@@ -30,6 +30,17 @@
     .select:not(.is-multiple):not(.is-loading)::after { /* Seta do select no tema escuro */
         border-color: #3273dc;
     }
+    #id_anotacao {
+    max-width: 60vw;
+    max-height: 20vh; /* Correção na propriedade e na unidade */
+}    /* =================================================================== */
+    @media (max-width: 600px) {
+            span {
+
+                font-size: 0.7rem !important;
+            }
+        }
+
 </style>
 {% endblock extra_css %}
 

@@ -58,7 +58,7 @@
             <div class="buttons is-centered">
                 {# --- CORREÇÃO: Link de "Cancelar" mais robusto --- #}
                 {# Leva o usuário de volta para a agenda, que é um local seguro e esperado #}
-                <a href="{% url 'agenda' id_user=user.id %}" class="button is-light is-medium">
+                <a href="{% url 'agenda:agenda' id_user=user.id %}" class="button is-light is-medium">
                     <span class="icon"><i class="fas fa-times-circle"></i></span>
                     <span>Não, Voltar</span>
                 </a>

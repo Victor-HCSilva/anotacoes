@@ -78,4 +78,4 @@ class CustomLoginView(LoginView):
         # 2. Usa 'reverse_lazy' para construir a URL de forma segura,
         #    passando o ID do usuário como um argumento (kwargs).
         #    'welcome' deve ser o 'name' da sua URL no arquivo urls.py.
-        return reverse_lazy('welcome', kwargs={'id_user': user.id})
+        return reverse_lazy('main:welcome', kwargs={'id_user': user.id})

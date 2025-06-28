@@ -18,8 +18,16 @@
             .sidebar-column, .main-content-column {
                 height: 100vh;
                 overflow-y: auto;
+                /* Adicionamos uma transição suave para o redimensionamento */
+                transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
             }
             html, body {
+                overflow: hidden;
+            }
+            .sidebar-column.is-hidden {
+                /* Garante que o menu escondido não ocupe espaço */
+                width: 0 !important;
+                padding: 0 !important;
                 overflow: hidden;
             }
         }
@@ -33,7 +41,6 @@
         .navbar-menu.is-active {
             background-color: #363636;
         }
-        /* Estilo para fazer o botão de logout parecer um link normal do menu */
         .logout-button {
             background: none !important;
             border: none !important;
@@ -50,6 +57,19 @@
             color: hsl(0, 0%, 100%) !important; /* has-text-white */
             background-color: transparent !important;
         }
+        .white-link{
+            color: rgb(200,200,200) !important;
+        }
+        .white-link:hover{
+            color: rgb(0,0,0) !important;
+        }
+        /* Estilo para o botão de toggle do menu desktop */
+        #desktop-menu-toggle {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+        }
     </style>
     {% block extra_css %}{% endblock extra_css %}
 </head>
@@ -57,11 +77,10 @@
 
     {% block body_wrapper %}
     {# ========================================== #}
-    {# === MENU MOBILE (NAVBAR) - CORRIGIDO   === #}
+    {# === MENU MOBILE (NAVBAR)               === #}
     {# ========================================== #}
     <nav class="navbar is-black is-hidden-desktop" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            {# CORREÇÃO: URL para 'main:welcome' #}
             <a href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item has-text-white">
                 <span class="icon-text">
                     <span class="icon is-medium"><i class="fas fa-rocket fa-lg"></i></span>
@@ -75,26 +94,22 @@
         <div id="mobileMenu" class="navbar-menu">
             <div class="navbar-start">
                 {% if user.is_authenticated %}
-                    <div class="navbar-item has-text-grey-light">Olá, {{ user.username }}</div>
+                    <div style="color: black important!;" class="navbar-item has-text-grey-light">Olá, {{ user.username }}</div>
                     <div class="navbar-item">
-                        {# CORREÇÃO: URL para 'main:logout' #}
                         <form method="post" action="{% url 'main:logout' %}">
                             {% csrf_token %}
-                            <button type="submit" class="logout-button">Sair</button>
+                            <button type="submit" class="white-link logout-button">Sair</button>
                         </form>
                     </div>
                     <hr class="navbar-divider">
                 {% endif %}
-                {# CORREÇÃO: URL para 'main:sobre' #}
-                <a href="{% url 'main:sobre' %}" class="navbar-item">Sobre</a>
-                {% if user %}
-                    {# CORREÇÃO: URL para 'main:welcome' #}
-                    <a href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a>
-                    {# CORREÇÃO: URL para 'agenda:calendario' (assumindo o nome que sugeri) #}
-                    <a href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a>
-                    {# CORREÇÃO: URL para 'main:anotacoes' (assumindo o nome que sugeri) #}
-                    <a href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Lista de tarefas</a>
-                {% endif %}
+                <ul class="menu-list">
+                    <li><a class="white-link"  href="{% url 'main:sobre' %}">Sobre</a></li>
+                    <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
+                    <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -102,11 +117,11 @@
 
     <div class="columns is-gapless">
         {# ========================================== #}
-        {# === MENU LATERAL (DESKTOP) - CORRIGIDO === #}
+        {# === MENU LATERAL (DESKTOP)             === #}
         {# ========================================== #}
-        <div class="column is-2-desktop has-background-black-ter sidebar-column is-hidden-touch">
+        <!-- NOVO: Adicionado id="desktopSidebar" -->
+        <div id="desktopSidebar" class="column is-2-desktop has-background-black-ter sidebar-column is-hidden-touch">
             <div class="menu-logo">
-                {# CORREÇÃO: URL para 'main:welcome' #}
                 <a href="{% url 'main:welcome' id_user=user.id %}" class="has-text-white">
                     <span class="icon-text">
                         <span class="icon is-medium"><i class="fas fa-rocket fa-lg"></i></span>
@@ -119,11 +134,9 @@
                 <ul class="menu-list">
                     {% if user.is_authenticated %}
                         <li><div class="p-2 has-text-grey-light">Olá, {{ user.username }}</div></li>
-                        {# CORREÇÃO CRÍTICA: Substituído <a> por <form> com POST #}
                         <li>
                             <form method="post" action="{% url 'main:logout' %}">
                                 {% csrf_token %}
-                                <!-- O padding aqui simula o padding de um item <a> do menu -->
                                 <button type="submit" class="logout-button" style="padding: 0.5em 0.75em;">Sair</button>
                             </form>
                         </li>
@@ -131,22 +144,24 @@
                 </ul>
                 <p class="menu-label">Opções</p>
                 <ul class="menu-list">
-                    {# CORREÇÃO: URL para 'main:sobre' #}
-                    <li><a href="{% url 'main:sobre' %}">Sobre</a></li>
-                    {% if user %}
-                        {# CORREÇÃO: URL para 'main:welcome' #}
-                        <li><a href="{% url 'main:welcome' id_user=user.id %}">Início</a></li>
-                        {# CORREÇÃO: URL para 'agenda:calendario' #}
-                        <li><a href="{% url 'agenda:agenda' id_user=user.id %}">Agenda</a></li>
-                        {# CORREÇÃO: URL para 'main:anotacoes' #}
-                        <li><a href="{% url 'main:anotacoes' id_user=user.id %}">Lista de tarefas</a></li>
-                    {% endif %}
+                    <li><a class="white-link" href="{% url 'main:sobre' %}">Sobre</a></li>
+                    <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
+                    <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
+                    <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
                 </ul>
             </aside>
         </div>
 
         <!-- Coluna 2: Conteúdo Principal -->
-        <div class="column is-10-desktop main-content-column">
+        <!-- NOVO: Adicionado id="mainContent" -->
+        <div id="mainContent" class="column is-10-desktop main-content-column">
+
+            <!-- NOVO: Botão para mostrar/esconder o menu no desktop -->
+            <a role="button" id="desktop-menu-toggle" class="button is-dark is-hidden-touch">
+                <span class="icon"><i class="fas fa-bars"></i></span>
+            </a>
+
             <main class="section">
                 <div class="container is-fluid">
                     {% block messages %}
@@ -178,12 +193,15 @@
     <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Script para fechar notificações
             (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
                 const $notification = $delete.parentNode;
                 $delete.addEventListener('click', () => {
                     $notification.parentNode.removeChild($notification);
                 });
             });
+
+            // Script para o menu hambúrguer do mobile
             const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
             if ($navbarBurgers.length > 0) {
                 $navbarBurgers.forEach( el => {
@@ -195,9 +213,25 @@
                     });
                 });
             }
+
+            // NOVO: Script para o menu lateral do desktop
+            const desktopToggle = document.getElementById('desktop-menu-toggle');
+            const desktopSidebar = document.getElementById('desktopSidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            if (desktopToggle && desktopSidebar && mainContent) {
+                desktopToggle.addEventListener('click', () => {
+                    // Esconde ou mostra a barra lateral
+                    desktopSidebar.classList.toggle('is-hidden');
+
+                    // Ajusta a largura da coluna de conteúdo principal
+                    mainContent.classList.toggle('is-10-desktop');
+                    mainContent.classList.toggle('is-12-desktop'); // is-12 ocupa a largura toda
+                });
+            }
         });
     </script>
     <script src="{% static 'js/custom.js' %}"></script>
     {% block extra_js %}{% endblock extra_js %}
 </body>
-</html>/html>
+</html>

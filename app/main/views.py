@@ -170,3 +170,6 @@ def editar_descricao(request, id_user, id_imagem, id_anotacao):
         "form":form
     }
     return render (request, "editar_descricao.html", context)
+
+def not_found(request):
+    return render(request, "404.html")

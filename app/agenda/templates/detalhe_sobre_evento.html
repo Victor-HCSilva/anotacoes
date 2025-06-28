@@ -1,0 +1,76 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detalhes: {{ evento.titulo|default:"Evento" }}{% endblock title %}
+
+
+{% block content %}
+<section class="section">
+    <div class="container">
+
+        <!-- 1. Cabeçalho com Título e Botão de Voltar, usando o componente 'level' -->
+        <div class="level mb-5">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title is-3 has-text-white">Detalhes do Evento</h1>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a class="button is-light" href="{% url 'agenda:agenda' id_user=user.id  %}">
+                        <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                        <span>Voltar para a Agenda</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Usando um 'box' para agrupar as informações do evento -->
+        <div class="box has-background-black-bis">
+            {% if evento %}
+                <!-- 3. Cabeçalho dentro do box para o título e data do evento -->
+                <h2 class="title is-4 has-text-light">{{ evento.titulo }}</h2>
+                <p class="subtitle is-6 has-text-grey-light">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                        <!-- Formatando a data E a hora para a tela de detalhes -->
+                        <span>{{ evento.dia_do_evento|date:"d/m/Y \à\s H:i" }}</span>
+                    </span>
+                </p>
+
+                <hr class="has-background-grey-darker">
+
+                <!-- 4. Corpo do box com os detalhes de forma estruturada -->
+                <div class="content has-text-light">
+                    <p>
+                        <strong class="has-text-grey-light">Descrição:</strong><br>
+                        {{ evento.descricao|linebreaksbr }} {# O filtro 'linebreaksbr' respeita as quebras de linha #}
+                    </p>
+                    <p>
+                        <strong class="has-text-grey-light">Tipo de Evento:</strong>
+                        <span class="tag is-primary ml-2">{{ evento.tipo_de_evento }}</span>
+                    </p>
+                    <p>
+                        <strong class="has-text-grey-light">Nível de Importância:</strong>
+                        <span class="tag is-warning ml-2">{{ evento.importancia }}</span>
+                    </p>
+                </div>
+
+            {% else %}
+                <!-- 5. Mensagem de erro aprimorada com o componente 'notification' -->
+                <div class="notification is-danger">
+                    <p class="has-text-centered">Ocorreu um erro ao carregar os detalhes do evento. Por favor, tente novamente.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endblock content %}
+
+
+{% block extra_js %}
+    <!-- Adicione o Font Awesome para os ícones funcionarem -->
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
+{% endblock extra_js %}

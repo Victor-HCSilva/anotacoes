@@ -67,11 +67,16 @@
         background-color: {{ cor_de_destaque|default:'#3273dc' }};
         margin: 4px auto 0;
     }
-
-    /* =================================================================== */
+    /*Área de texto*/
+    #id_descricao {
+    max-width: 40vw;
+    max-height: 10vh; /* Correção na propriedade e na unidade */
+}    /* =================================================================== */
     /* === MELHORIA 2: ESTILOS PARA TELAS MAIORES (TABLET E DESKTOP) === */
     /* =================================================================== */
     @media screen and (min-width: 769px) {
+
+
         .table.calendar th {
             font-size: 1rem;
             padding: 0.75em;
@@ -101,7 +106,23 @@
             border-left: 3px solid {{ cor_de_destaque|default:'blue' }};
             color: #ccc; /* MELHORIA: Cor movida do style inline para cá */
         }
+
     }
+    /*
+        .is-ghost{
+            padding: 1px !important;
+            border: 1px solid white !important;
+            color: white !important;
+        }
+        .is-ghost:hover{
+            font-size: 18px;
+            border: 2px solid gray !important;
+            text-decoration: none !important;
+        }*/
+    .button{
+        padding: 2px !important;
+    }
+
 </style>
 {% endblock extra_css %}
 
@@ -126,11 +147,16 @@
     {# COLUNA DA DIREITA (Agora à esquerda no código): FORMULÁRIO E LISTA #}
     <div class="column is-one-third">
         <div class="box has-background-black-bis mb-5">
+            {% comment %}
             <a href="{% url 'main:anotacoes' id_user=user.id%}">
-              <button class="button is-primary">Anotações</button>
+              <button class="button is-ghost">Anotações</button>
             </a>
+            {% endcomment %}
             <a href="{% url 'agenda:configs' id_user=user.id%}">
-              <button class="button is-link">Configurações</button>
+              <button class="button is-dark">Configurações</button>
+            </a>
+            <a href="{% url 'agenda:eventos' id_user=user.id%}">
+              <button class="button is-dark">Eventos</button>
             </a>
             <h3 style="color:white;" class="title is-4">Adicionar Evento</h3>
             <form method="POST">

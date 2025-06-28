@@ -27,7 +27,7 @@ class Agenda:
                 agenda.user = user
                 print("User:", agenda.user)
                 agenda.save()
-                return redirect("agenda:agenda", id_user=id_user)
+                return redirect("agenda:eventos", id_user=id_user)
             else:
                 print("Erros:",form.errors)
 
@@ -69,10 +69,29 @@ class Agenda:
 
 class Eventos():
     def __init__(self, request: HttpRequest):
-        sefl.request = request
+        self.request = request
 
-    def eventos_(self, request, id_user: int):
-        return render("eventos.txt")
+    def eventos_(self,  id_user: int):
+        user = get_object_or_404(User, id=id_user)
+        eventos = AgendaModel.objects.filter(
+            user=user,
+        )
+        context = {
+            "eventos":eventos,
+            "user":user,
+        }
+        return render(self.request, "eventos.html",context)
+
+    def detalhe_sobre_evento(self,  id_user: int, id_evento):
+        user = get_object_or_404(User, id=id_user)
+        evento = get_object_or_404(AgendaModel,id=id_evento)
+        context = {
+            "evento":evento,
+            "user":user,
+        }
+
+        return render(self.request, "detalhe_sobre_evento.html",context)
+
 
 class Configs:
     def __init__(self, request: HttpRequest):
@@ -124,7 +143,7 @@ class DeleteOrEditEvent():
 
         if self.request.method == "POST":
             evento.delete()
-            return redirect("main:agenda", id_user=id_user)
+            return redirect("agenda:eventos", id_user=id_user)
 
         return render(self.request, "delete_event.html", context)
 
@@ -144,7 +163,7 @@ class DeleteOrEditEvent():
             else:
                 print("erros",form.errors)
 
-            return redirect("main:agenda", id_user=id_user)
+            return redirect("agenda:eventos", id_user=id_user)
 
         form = AgendaForm(instance=evento)
         context = {

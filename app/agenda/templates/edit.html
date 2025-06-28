@@ -1,82 +1,87 @@
 {% extends "base.html" %}
 {% load static %}
 
-{# O título da aba do navegador agora reflete a ação de edição #}
 {% block title %}Editar Evento: {{ form.instance.titulo|default:"Evento" }}{% endblock title %}
 
-{% block extra_css %}
-{# CSS continua o mesmo, não há necessidade de mudança aqui #}
-{% endblock extra_css %}
-
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-two-thirds-tablet is-half-desktop">
+<section class="section">
+    <div class="columns is-centered">
+        <div class="column is-two-thirds-tablet is-half-desktop">
 
-        <div class="box has-background-black-bis">
+            <!-- A classe 'box' já cria um bom contêiner para o formulário -->
+            <!-- 'has-background-black-bis' cria um fundo cinza muito escuro, ideal para o tema -->
+            <div class="box has-background-black-bis">
 
-            {# --- CORREÇÃO APLICADA AQUI --- #}
-            <h1 class="title is-3">
-                <span class="icon-text">
-                    <span class="icon"><i class="fas fa-edit"></i></span> {# Ícone de edição #}
-                    <span>Editar Evento</span> {# Texto corrigido #}
-                </span>
-            </h1>
-            <p class="subtitle is-6 has-text-grey">
-                Modifique os detalhes do seu compromisso abaixo.
-            </p>
-            {# --- FIM DA CORREÇÃO --- #}
+                <h1 class="title is-3 has-text-light"> {# 1. Adicionado 'has-text-light' para o título ficar branco #}
+                    <span class="icon-text">
+                        <span class="icon"><i class="fas fa-edit"></i></span>
+                        <span>Editar Evento</span>
+                    </span>
+                </h1>
+                <p class="subtitle is-6 has-text-grey-light"> {# 2. 'has-text-grey-light' para melhor contraste #}
+                    Modifique os detalhes
+                </p>
 
-            <hr class="has-background-grey-darker">
+                <hr class="has-background-grey-darker">
 
-            <form method="POST">
-                {% csrf_token %}
+                <form method="POST">
+                    {% csrf_token %}
 
-                {# Renderização manual do formulário (sem alterações) #}
-                {% for field in form %}
-                    <div class="field">
-                        <label class="label" for="{{ field.id_for_label }}">
-                            {{ field.label }}
-                        </label>
-                        <div class="control">
-                            {{ field }}
+                    {% for field in form %}
+                        <div class="field">
+                            <!-- 3. Adicionado 'has-text-light' para as labels do formulário -->
+                            <label class="label has-text-light" for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+                            <div class="control">
+                                {{ field }} {# O campo em si será estilizado via Python ou JS #}
+                            </div>
+                            {% if field.help_text %}
+                                <!-- 4. 'has-text-grey-light' para o texto de ajuda ficar mais legível -->
+                                <p class="help has-text-grey-light">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p class="help is-danger">{{ error }}</p>
+                            {% endfor %}
                         </div>
-                        {% if field.help_text %}
-                            <p class="help">{{ field.help_text }}</p>
-                        {% endif %}
-                        {% for error in field.errors %}
-                            <p class="help is-danger">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+                    {% endfor %}
 
-                <div class="field is-grouped mt-5">
-                    <div class="control">
-                        <button type="submit" class="button is-success is-medium">
-                            <span class="icon"><i class="fas fa-check"></i></span>
-                            <span>Salvar Alterações</span>
-                        </button>
+                    <div class="field is-grouped mt-5">
+                        <div class="control">
+                            <button type="submit" class="button is-success is-medium">
+                                <span class="icon"><i class="fas fa-check"></i></span>
+                                <span>Salvar Alterações</span>
+                            </button>
+                        </div>
+                        <div class="control">
+                            <a class="button is-light is-medium" href="{% url 'agenda:agenda' id_user=user.id %}">
+                                Cancelar
+                            </a>
+                        </div>
                     </div>
-                    <div class="control">
-                        <a class="button is-light is-medium" href="{% url 'agenda' id_user=user.id %}">
-                            Cancelar
-                        </a>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
+
         </div>
-
     </div>
-</div>
+</section>
 {% endblock content %}
 
 {% block extra_js %}
-{# O script de apoio para formulários continua o mesmo #}
+{# Este bloco JS continua funcional, mas veja a recomendação abaixo para uma abordagem melhor #}
+{{ block.super }} {# Mantém o JS da base, se houver #}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('form');
         if (form) {
             form.querySelectorAll('input, textarea, select').forEach(el => {
+                // Não modifica botões ou checkboxes/radios
                 if (el.type === 'submit' || el.type === 'button' || el.type === 'reset' || el.type === 'checkbox' || el.type === 'radio') { return; }
+
+                // Adiciona classes de estilo dark aos campos
+                el.classList.add('has-background-grey-dark', 'has-text-light', 'is-focused');
+
+                // Adiciona as classes de estrutura do Bulma
                 if (!el.classList.contains('input') && el.tagName !== 'TEXTAREA' && el.tagName !== 'SELECT') { el.classList.add('input'); }
                 if (el.tagName === 'TEXTAREA' && !el.classList.contains('textarea')) { el.classList.add('textarea'); }
                 if (el.tagName === 'SELECT' && !el.parentElement.classList.contains('select')) {
