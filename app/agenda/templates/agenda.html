@@ -6,134 +6,114 @@
 
 {% block extra_css %}
 <style>
+    /* Define a cor do usuário como uma variável CSS para reuso fácil */
+    :root {
+        --cor-destaque-usuario: {{ cor_de_destaque|default:'#3273dc' }} !important;
+    }
+
     /* =================================================================== */
-    /* === MELHORIA 1: ESTILOS MOBILE-FIRST (Padrão para telas pequenas) === */
+    /* === ESTILOS GERAIS E MOBILE-FIRST === */
     /* =================================================================== */
     .calendar-container {
-        overflow-x: auto; /* Permite rolar o calendário horizontalmente se ele for muito largo */
+        overflow-x: auto;
     }
     .table.calendar {
         table-layout: fixed;
         background-color: #2a2a2a;
-        min-width: 100%; /* Garante que o calendário ocupe o espaço */
+        min-width: 100%;
     }
     .table.calendar th {
         color: #ffffff;
         background-color: #1e1e1e;
         text-align: center;
-        padding: 0.5em 0.2em; /* Padding menor para mobile */
+        padding: 0.5em 0.2em;
         font-size: 0.8rem;
     }
     .table.calendar td {
         border: 1px solid #4a4a4a;
-        height: 10vh; /* MELHORIA: Altura flexível baseada na altura da tela */
+        height: 12vh;
         vertical-align: top;
-        padding: 0.25em;
+        padding: 0.35em;
         transition: background-color 0.2s ease-in-out;
-    }
-    .table.calendar td:hover {
-        background-color: #383838;
+        overflow-y: auto; /* Permite rolar dentro do dia se houver muitos eventos */
     }
     .is-empty { background-color: #222222 !important; cursor: default; }
 
+    /* === LÓGICA DE DESTAQUE === */
+    /* 1. Destaque para dias com eventos (afeta a célula inteira) */
+    .has-events {
+        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 15%, #2a2a2a);
+        border-left: 3px solid var(--cor-destaque-usuario);
+    }
+    .table.calendar td.has-events:hover {
+        background-color: color-mix(in srgb, var(--cor-destaque-usuario) 25%, #2a2a2a);
+    }
+
+    /* 2. Destaque para o dia ATUAL (afeta apenas o número) */
     .day-number {
         font-size: 0.85rem;
         display: inline-block;
         padding: 0.2em;
+        margin-bottom: 5px;
     }
     .is-today .day-number {
-        background-color: #3273dc;
+        background-color: var(--cor-destaque-usuario);
         color: white;
         border-radius: 50%;
-        width: 1.75em;
-        height: 1.75em;
+        width: 1.8em;
+        height: 1.8em;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
+        box-shadow: 0 0 5px rgba(0,0,0,0.5); /* Sombra para destacar sobre o fundo .has-events */
     }
 
-    /* MELHORIA: Esconder o título do evento em telas pequenas */
-    .event-title {
-        display: none;
-    }
-
-    /* MELHORIA: Mostrar um ponto indicador de evento em telas pequenas */
+    /* === LÓGICA DE EXIBIÇÃO DOS EVENTOS === */
+    /* Por padrão (mobile), esconde a lista e mostra o indicador */
+    .events-list { display: none; }
     .event-indicator {
         display: block;
-        height: 6px;
-        width: 6px;
+        height: 8px;
+        width: 8px;
         border-radius: 50%;
-        background-color: {{ cor_de_destaque|default:'#3273dc' }};
-        margin: 4px auto 0;
+        background-color: var(--cor-destaque-usuario);
+        margin: 5px auto 0;
     }
-    /*Área de texto*/
-    #id_descricao {
-    max-width: 40vw;
-    max-height: 10vh; /* Correção na propriedade e na unidade */
-}    /* =================================================================== */
-    /* === MELHORIA 2: ESTILOS PARA TELAS MAIORES (TABLET E DESKTOP) === */
+
+    #id_descricao { max-width: 100%; max-height: 10vh; }
+
+    /* =================================================================== */
+    /* === ESTILOS PARA TELAS MAIORES (TABLET E DESKTOP) === */
     /* =================================================================== */
     @media screen and (min-width: 769px) {
+        .table.calendar td { height: 140px; }
 
+        /* Inverte a visibilidade: mostra a lista e esconde o indicador */
+        .event-indicator { display: none; }
+        .events-list { display: block; }
 
-        .table.calendar th {
-            font-size: 1rem;
-            padding: 0.75em;
-        }
-        .table.calendar td {
-            height: 120px; /* Altura fixa para desktop, como estava antes */
-            padding: 0.5em;
-        }
-        .day-number {
-            font-size: 1rem;
-        }
-        /* Esconde o ponto indicador no desktop */
-        .event-indicator {
-            display: none;
-        }
-        /* Mostra o título completo do evento no desktop */
         .event-title {
-            display: block;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             padding: 2px 5px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
             margin-top: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            border-left: 3px solid {{ cor_de_destaque|default:'blue' }};
-            color: #ccc; /* MELHORIA: Cor movida do style inline para cá */
+            color: #ddd;
         }
-
     }
-    /*
-        .is-ghost{
-            padding: 1px !important;
-            border: 1px solid white !important;
-            color: white !important;
-        }
-        .is-ghost:hover{
-            font-size: 18px;
-            border: 2px solid gray !important;
-            text-decoration: none !important;
-        }*/
-    .button{
-        padding: 2px !important;
-    }
-
+    .button { padding: 2px !important; }
 </style>
 {% endblock extra_css %}
 
 {% block content %}
-
-{# O cabeçalho com o componente 'level' já é responsivo. Mantido. #}
 <div class="level is-mobile mb-5">
     <div class="level-left">
         <div class="level-item">
             <div>
-                {# MELHORIA: Removido style inline, usando classe de texto. #}
                 <h1 class="title is-2 has-text-grey">
                     <span class="icon mr-3"><i class="fas fa-calendar-alt fa-lg"></i></span>
                     Agenda
@@ -144,21 +124,16 @@
 </div>
 
 <div class="columns is-flex-direction-row-reverse">
-    {# COLUNA DA DIREITA (Agora à esquerda no código): FORMULÁRIO E LISTA #}
+    {# COLUNA DA DIREITA: FORMULÁRIO E LISTA #}
     <div class="column is-one-third">
         <div class="box has-background-black-bis mb-5">
-            {% comment %}
-            <a href="{% url 'main:anotacoes' id_user=user.id%}">
-              <button class="button is-ghost">Anotações</button>
-            </a>
-            {% endcomment %}
             <a href="{% url 'agenda:configs' id_user=user.id%}">
               <button class="button is-dark">Configurações</button>
             </a>
             <a href="{% url 'agenda:eventos' id_user=user.id%}">
               <button class="button is-dark">Eventos</button>
             </a>
-            <h3 style="color:white;" class="title is-4">Adicionar Evento</h3>
+            <h3 style="color:white;" class="title is-4 mt-4">Adicionar Evento</h3>
             <form method="POST">
                 {% csrf_token %}
                 {% for field in form %}
@@ -181,7 +156,7 @@
         </div>
     </div>
 
-    {# COLUNA DA ESQUERDA (Agora à direita no código): CALENDÁRIO VISUAL #}
+    {# COLUNA DA ESQUERDA: CALENDÁRIO VISUAL #}
     <div class="column is-two-thirds">
         <div class="box has-background-black-bis p-2 p-4-tablet">
             <div class="calendar-container">
@@ -200,17 +175,22 @@
                                 {% if dia == 0 %}
                                     <td class="is-empty"></td>
                                 {% else %}
+                                    {# LÓGICA CENTRAL: Adiciona classes condicionalmente à célula #}
                                     <td class="
                                         has-text-white
                                         {% if dia == dia_atual and mes == mes_atual and ano == ano_atual %}is-today{% endif %}
-                                        {% if dia in eventos_por_dia %}has-events{% endif %}">
+                                        {% if dia in eventos_por_dia %}has-events{% endif %}
+                                    ">
                                         <span class="day-number">{{ dia }}</span>
+
+                                        {# Se houver eventos, renderiza os elementos correspondentes #}
                                         {% if dia in eventos_por_dia %}
-                                            {# MELHORIA: Mostra o título no desktop e um ponto no mobile #}
                                             <span class="event-indicator"></span>
-                                            {% for titulo in eventos_por_dia|get_item:dia %}
-                                                <span class="event-title">{{ titulo }}</span>
-                                            {% endfor %}
+                                            <div class="events-list">
+                                                {% for titulo in eventos_por_dia|get_item:dia %}
+                                                    <div class="event-title" title="{{ titulo }}">{{ titulo }}</div>
+                                                {% endfor %}
+                                            </div>
                                         {% endif %}
                                     </td>
                                 {% endif %}
@@ -223,12 +203,10 @@
         </div>
     </div>
 </div>
-
 {% endblock content %}
 
 
 {% block extra_js %}
-{# O script para estilizar o formulário já é excelente. Mantido. #}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('form');

@@ -18,50 +18,61 @@ class Agenda:
         if self.request.user.id != id_user:
             return redirect('main:login')
 
-        form = AgendaForm(self.request.POST)
+        form = AgendaForm(self.request.POST or None) # Use 'or None' para GET requests
         user = get_object_or_404(User, id=id_user)
 
-        if form.is_valid():
-            if self.request.method == "POST":
+        if self.request.method == "POST":
+            if form.is_valid():
                 agenda = form.save(commit=False)
                 agenda.user = user
-                print("User:", agenda.user)
                 agenda.save()
-                return redirect("agenda:eventos", id_user=id_user)
+                # Redireciona para o mesmo mês/ano do evento criado
+                return redirect("agenda:eventos",
+                                id_user=id_user,)
             else:
-                print("Erros:",form.errors)
+                print("Erros no formulário:", form.errors)
 
+        # Lógica do Calendário
         agora = datetime.now()
-        ano = ano or agora.year
-        mes = mes or agora.month
-        cal = calendar.Calendar(firstweekday=6)
-        mes_dias = cal.monthdayscalendar(ano, mes)
-        nome_mes = calendar.month_name[mes]
-        hoje = datetime.now()
-        dia_do_mes = hoje.day
-        cor_obj = Colors.objects.filter(user=user).first()
-        cor_de_destaque = cor_obj.cor_de_destaque if cor_obj else "#808080" # Usa cinza se não houver cor
-        eventos_do_mes = AgendaModel.objects.filter(
-            user=user, dia_do_evento__year=ano,
-            dia_do_evento__month=mes
-        )
-        eventos_por_dia = defaultdict(list)
+        # Usa o ano/mês da URL, ou o atual como padrão
+        ano_visualizado = ano or agora.year
+        mes_visualizado = mes or agora.month
 
+        cal = calendar.Calendar(firstweekday=6) # Domingo como primeiro dia
+        mes_dias = cal.monthdayscalendar(ano_visualizado, mes_visualizado)
+        nome_mes = calendar.month_name[mes_visualizado]
+
+        # Busca a cor de configuração do usuário
+        cor_obj = Colors.objects.filter(user=user).first()
+        cor_de_destaque = cor_obj.cor_de_destaque if cor_obj else "#3273dc" # Um azul padrão se não houver
+        #print(cor_de_destaque)
+        # Busca eventos e agrupa por dia
+        eventos_do_mes = AgendaModel.objects.filter(
+            user=user,
+            dia_do_evento__year=ano_visualizado,
+            dia_do_evento__month=mes_visualizado
+        ).order_by('dia_do_evento__time') # Ordena por hora do dia
+
+        eventos_por_dia = defaultdict(list)
         for evento in eventos_do_mes:
             eventos_por_dia[evento.dia_do_evento.day].append(evento.titulo)
 
         context = {
-            'ano': ano,
-            'mes': mes,
+            'form': form,
+            'id_user': id_user,
+            'ano': ano_visualizado,
+            'mes': mes_visualizado,
             'nome_mes': nome_mes,
             'dias_semana': ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
             'mes_dias': mes_dias,
-            'id_user': id_user,
-            "dia_atual": dia_do_mes,
-            "cor_de_destaque": cor_de_destaque,
-            "eventos_do_mes": eventos_do_mes,  # Para a lista no final da página
-            "eventos_por_dia": dict(eventos_por_dia), # O dicionário para o calendário
-            "form": form,
+            'cor_de_destaque': cor_de_destaque,
+            'eventos_por_dia': dict(eventos_por_dia),
+
+            # --- Adições Cruciais ---
+            # Envia a data atual REAL para o template
+            "dia_atual": agora.day,
+            "mes_atual": agora.month,
+            "ano_atual": agora.year,
         }
 
         return render(self.request, "agenda.html", context)
