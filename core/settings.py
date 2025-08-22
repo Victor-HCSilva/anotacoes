@@ -17,10 +17,10 @@ LOGOUT_REDIRECT_URL = 'login'
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
-
+SECRET_KEY = "django-insecure-dy90dm-xu35#=r+-3aeiw5stm3@5+21x*53#z*g4$*23-h%6xz"
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG") == "True"
+DEBUG = True
+print(DEBUG)
 
 ALLOWED_HOSTS = ["*"]
 
@@ -146,7 +146,4 @@ MEDIA_ROOT = BASE_DIR / "media"
 # URL para se referir aos arquivos estáticos (ex: /static/css/style.css)
 STATIC_URL = '/static/'
 
-# --- ESTA É A PARTE QUE VOCÊ PRECISA ADICIONAR ---
-# Caminho absoluto para a pasta onde o `collectstatic` irá juntar todos os arquivos estáticos.
-# O PythonAnywhere usará esta pasta para servir os arquivos.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
