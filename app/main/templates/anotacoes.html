@@ -92,7 +92,19 @@
                                     <span class="icon-text">
                                         <span class="icon"><i class="fas fa-hourglass-half"></i></span>
                                         <strong style="color: {{ anotacao_item.color|default:'inherit' }};">
-                                            Prazo: {{ anotacao_item.prazo }}
+
+                                            {% if anotacao_item.prazo <= 0 %}
+                                                Esta tarefa passou do prazo!
+                                            {% elif anotacao_item.prazo == 1  %}
+
+                                                Prazo restante: {{ anotacao_item.prazo }} dia
+
+                                            {% elif anotacao_item.prazo > 1 %}
+                                                Prazo restante: {{ anotacao_item.prazo }} dias
+                                            {% endif %}
+
+
+
                                         </strong>
                                     </span>
                                 </p>
