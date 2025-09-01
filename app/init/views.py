@@ -57,6 +57,28 @@ def sobre(request):
     return render(request, "sobre.html",{"user":user})
 
 
+def create_account(request):
+    if request.method == "GET":
+        form = UserForm()
+        return render(request, "new_account.html", {"form": form})
+
+    elif request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+
+            user = User.objects.create_user(
+                username=username,
+                password=password
+            )
+            if user.id:
+                return redirect(
+                    reverse_lazy("main:login")
+                )
+        else:
+            return render(request, "new_account.html", {"form": form})
+
 
 # Login do django mesmo
 class CustomLoginView(LoginView):

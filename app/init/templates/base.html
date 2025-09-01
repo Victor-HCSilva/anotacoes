@@ -94,7 +94,9 @@
     {# ========================================== #}
     <nav class="navbar is-black is-hidden-desktop" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item has-text-white">
+                {% if user.id %}
+                    <a href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item has-text-white">
+                {% endif %}
                 <span class="icon-text">
                     <span class="icon is-medium"><i class="fas fa-rocket fa-lg"></i></span>
                     <strong class="is-size-5 ml-2">Brain 🧠</strong>
@@ -115,14 +117,14 @@
                         </form>
                     </div>
                     <hr class="navbar-divider">
+                    <ul class="menu-list">
+                        <li><a class="white-link"  href="{% url 'main:sobre' %}">Sobre</a></li>
+                        <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
+                        <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
+                        <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
+                        <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
+                    </ul>
                 {% endif %}
-                <ul class="menu-list">
-                    <li><a class="white-link"  href="{% url 'main:sobre' %}">Sobre</a></li>
-                    <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
-                    <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
-                    <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
-                    <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
-                </ul>
             </div>
         </div>
     </nav>
@@ -135,7 +137,9 @@
         <!-- NOVO: Adicionado id="desktopSidebar" -->
         <div id="desktopSidebar" class="column is-2-desktop has-background-black-ter sidebar-column is-hidden-touch">
             <div class="menu-logo">
-                <a href="{% url 'main:welcome' id_user=user.id %}" class="has-text-white">
+                {% if user.id %}
+                    <a href="{% url 'main:welcome' id_user=user.id %}" class="has-text-white">
+                {% endif %}
                     <span class="icon-text">
                         <span class="icon is-medium"><i class="fas fa-rocket fa-lg"></i></span>
                         <strong class="is-size-5 ml-2">Brain 🧠</strong>
@@ -153,16 +157,17 @@
                                 <button type="submit" class="logout-button" style="padding: 0.5em 0.75em;">Sair</button>
                             </form>
                         </li>
+
+                        </ul>
+                        <p class="menu-label">Opções</p>
+                        <ul class="menu-list">
+                            <li><a class="white-link" href="{% url 'main:sobre' %}">Sobre</a></li>
+                            <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
+                            <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
+                        </ul>
                     {% endif %}
-                </ul>
-                <p class="menu-label">Opções</p>
-                <ul class="menu-list">
-                    <li><a class="white-link" href="{% url 'main:sobre' %}">Sobre</a></li>
-                    <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
-                    <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
-                    <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
-                    <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
-                </ul>
             </aside>
         </div>
 

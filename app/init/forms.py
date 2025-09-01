@@ -33,13 +33,30 @@ class TodoForm(ModelForm):
         }
 
 
-class UserForm(ModelForm):
+class UserForm(forms.ModelForm):
+    password = forms.CharField(
+        label="Senha:",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "input",
+                "placeholder": "Digite sua senha"
+            }
+        )
+    )
+
     class Meta:
         model = User
         fields = ["username", "password"]
         labels = {
             "username": "Nome:",
-            "password":"Senha:"
+        }
+        widgets = {
+            "username": forms.TextInput(
+                attrs={
+                    "class": "input",
+                    "placeholder": "Digite seu nome de usuário"
+                }
+            ),
         }
 
 
