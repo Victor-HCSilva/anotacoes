@@ -9,6 +9,9 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
 
+def home(request):
+    return render(request, "home.html")
+
 @login_required()
 def main(request, id_user: int):
     todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
