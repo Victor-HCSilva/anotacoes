@@ -18,9 +18,13 @@
             </div>
             <div class="level-right">
                 <div class="level-item">
-                    <a class="button is-light" href="{% url 'agenda:agenda' id_user=user.id  %}">
+                    <a class="button is-ghost" href="{% url 'agenda:agenda' id_user=user.id  %}">
                         <span class="icon"><i class="fas fa-arrow-left"></i></span>
                         <span>Voltar para a Agenda</span>
+                    </a>
+                    <a class="button is-ghost" href="{% url 'agenda:eventos' id_user=user.id  %}">
+                        <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                        <span>Eventos</span>
                     </a>
                 </div>
             </div>
@@ -52,8 +56,34 @@
                         <span class="tag is-primary ml-2">{{ evento.tipo_de_evento }}</span>
                     </p>
                     <p>
-                        <strong class="has-text-grey-light">Nível de Importância:</strong>
-                        <span class="tag is-warning ml-2">{{ evento.importancia }}</span>
+
+
+                    {% if evento.importancia == "1" %}
+                        <span class="icon-text has-text-info">
+                          <span class="icon">
+                            <i class="fas fa-info-circle"></i>
+                          </span>
+                          <span>Mínima importância</span>
+                        </span>
+                    {% elif evento.importancia == "2" %}
+                        <span class="icon-text has-text-warning">
+                          <span class="icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                          </span>
+                          <span>Média importância</span>
+                        </span>
+                    {% elif evento.importancia == "3" %}
+                        <span class="icon-text has-text-danger">
+                          <span class="icon">
+                            <i class="fas fa-ban"></i>
+                          </span>
+                          <span>Máxima importância</span>
+                        </span>
+
+                    {% endif %}
+
+
+
                     </p>
                 </div>
 

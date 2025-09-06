@@ -87,6 +87,8 @@ class Eventos():
         eventos = AgendaModel.objects.filter(
             user=user,
         )
+        for i in eventos:
+            print("eventos:  ", i.importancia , "  ---- ", "tipo: -- ", type(i.importancia))
         context = {
             "eventos":eventos,
             "user":user,

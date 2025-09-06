@@ -44,7 +44,7 @@
             <div class="buttons actions-menu is-centered-mobile">
                 <a class="button is-light" href="{% url 'main:anotacoes' id_user=user.id %}"><span class="icon"><i class="fas fa-arrow-left"></i></span><span>Voltar</span></a>
                 <a class="button is-info" href="{% url 'main:main' id_user=user.id %}"><span class="icon"><i class="fas fa-plus"></i></span><span>Nova</span></a>
-                <a class="button is-warning" href="{% url 'main:editar' id_user=user.id id_anotacao=tarefa.id %}"><span class="icon"><i class="fas fa-edit"></i></span><span>Atualizar</span></a>
+                <a class="button is-warning" href="{% url 'main:editar' id_user=user.id id_anotacao=tarefa.id %}"><span class="icon"><i class="fas fa-edit"></i></span><span>Editar</span></a>
                 <a class="button is-danger" href="{% url 'main:remover' id_user=user.id id_anotacao=tarefa.id %}" onclick="return confirm('Tem certeza?');"><span class="icon"><i class="fas fa-trash"></i></span><span>Deletar</span></a>
             </div>
 

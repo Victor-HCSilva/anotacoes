@@ -133,6 +133,12 @@
     </div>
 </div>
 
+    <a class="button is-link is-light" href="{% url 'main:anotacoes' id_user=user.id  %}">
+
+        <span style="padding: 20px;">
+            <i class="fas fa-arrow-left"></i>
+          </span>
+    </a>
 <div class="columns is-flex-direction-row-reverse">
     {# COLUNA DA DIREITA: FORMULÁRIO E LISTA #}
     <div class="column is-one-third">
@@ -165,7 +171,6 @@
             </form>
         </div>
     </div>
-
     {# COLUNA DA ESQUERDA: CALENDÁRIO VISUAL #}
     <div class="column is-two-thirds">
         <div class="box has-background-black-bis p-2 p-4-tablet">
