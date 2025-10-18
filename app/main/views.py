@@ -20,6 +20,7 @@ def anotacoes(request, id_user):
     prioridade_filter = request.GET.get('prioridade')
     favorito_filter = request.GET.get('favorito')
     completo_filter = request.GET.get('completo')
+    titulo_filter = request.GET.get('titulo')
 
     if tag_filter:
         todos = todos.filter(tag=tag_filter)
@@ -30,7 +31,9 @@ def anotacoes(request, id_user):
         todos = todos.filter(favorito=(favorito_filter.lower() == 'true'))
     if completo_filter:
         todos = todos.filter(completo=(completo_filter.lower() == 'true'))
-
+    if titulo_filter: # <--- NOVO: Aplica o filtro de título
+        # Usamos icontains para busca case-insensitive e parcial
+        todos = todos.filter(titulo__icontains=titulo_filter)
     prazos = {} # Parece que 'prazos' não está sendo usado, mas mantive por consistência
 
     for tarefa in todos:
@@ -71,6 +74,7 @@ def anotacoes(request, id_user):
         "selected_prioridade": prioridade_filter,
         "selected_favorito": favorito_filter,
         "selected_completo": completo_filter,
+        "selected_titulo": titulo_filter,
     }
 
     return render(request, "anotacoes.html", context)

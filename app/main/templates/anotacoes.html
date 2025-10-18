@@ -5,7 +5,6 @@
 
 {% block extra_css %}
 <style>
-    /* O CSS agora está muito mais limpo, focando apenas no layout e não nas cores do texto */
     .card-anotacao {
         background-color: #2f2f2f;
         border: 1px solid #4a4a4a;
@@ -14,23 +13,22 @@
         flex-direction: column;
     }
     .card-anotacao .card-content {
-        flex-grow: 1; /* Empurra o rodapé para baixo, alinhando-o com outros cards */
+        flex-grow: 1;
     }
     .card-anotacao .card-footer-item.has-text-danger:hover {
         background-color: #f14668;
         color: white;
     }
-    /* Estilo para os checkboxes e labels */
     .filter-checkbox-group label {
         margin-left: 0.5em;
-        margin-right: 1em; /* Espaço entre os checkboxes */
-        color: white; /* Garante que o texto do label seja branco */
+        margin-right: 1em;
+        color: white;
     }
     .filter-checkbox-group input[type="checkbox"] {
         vertical-align: middle;
     }
     .filter-section {
-        background-color: #2f2f2f; /* Fundo escuro para a seção de filtros */
+        background-color: #2f2f2f;
         padding: 1.5rem;
         border-radius: 6px;
         margin-bottom: 2rem;
@@ -74,6 +72,18 @@
     <h3 class="title is-4 has-text-light mb-4">Filtros</h3>
     <form action="" method="get">
         <div class="field is-grouped is-grouped-multiline">
+            {# Filtro por Título #}
+            <div class="control is-expanded">
+                <div class="field has-addons">
+                    <div class="control">
+                        <span class="button is-static is-dark">Título</span>
+                    </div>
+                    <div class="control is-expanded">
+                        <input class="input is-dark" type="text" name="titulo" placeholder="Buscar por título..." value="{{ selected_titulo|default:'' }}">
+                    </div>
+                </div>
+            </div>
+
             {# Filtro por Tag #}
             <div class="control">
                 <div class="field has-addons">
@@ -81,7 +91,7 @@
                         <span class="button is-static is-dark">Tag</span>
                     </div>
                     <div class="control is-expanded">
-                        <div class="select is-fullwidth">
+                        <div class="select is-fullwidth is-dark"> {# Adicionado is-dark aqui para o estilo #}
                             <select name="tag">
                                 <option value="">Todas</option>
                                 {% for tag_value, tag_display in all_tags %}
@@ -102,11 +112,10 @@
                         <span class="button is-static is-dark">Prioridade</span>
                     </div>
                     <div class="control is-expanded">
-                        <div class="select is-fullwidth">
+                        <div class="select is-fullwidth is-dark"> {# Adicionado is-dark aqui para o estilo #}
                             <select name="prioridade">
                                 <option value="">Todas</option>
                                 {% for prioridade_value, prioridade_display in all_prioridades %}
-                                    {# Note que prioridade_display é o valor '1', '2', '3' e prioridade_value é 'Mínima', 'Mediana', 'Máxima' #}
                                     <option value="{{ prioridade_display }}" {% if selected_prioridade == prioridade_display %}selected{% endif %}>
                                         {{ prioridade_value }}
                                     </option>
@@ -116,32 +125,26 @@
                     </div>
                 </div>
             </div>
-
-            {# Checkboxes para Favorito e Completo #}
-            <div class="control">
-                <div class="field is-grouped filter-checkbox-group">
-                    <div class="control">
-                        <label class="checkbox has-text-white">
-                            <input type="checkbox" name="favorito" value="true" {% if selected_favorito == 'true' %}checked{% endif %}>
-                            Apenas Favoritos
-                        </label>
-                    </div>
-                    <div class="control">
-                        <label class="checkbox has-text-white">
-                            <input type="checkbox" name="completo" value="true" {% if selected_completo == 'true' %}checked{% endif %}>
-                            Apenas Concluídos
-                        </label>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <div class="field is-grouped mt-4">
+        {# Checkboxes e Botões #}
+        <div class="field is-grouped is-grouped-multiline mt-4">
+            <div class="control">
+                <label class="checkbox has-text-white">
+                    <input type="checkbox" name="favorito" value="true" {% if selected_favorito == 'true' %}checked{% endif %}>
+                    Apenas Favoritos
+                </label>
+            </div>
+            <div class="control">
+                <label class="checkbox has-text-white">
+                    <input type="checkbox" name="completo" value="true" {% if selected_completo == 'true' %}checked{% endif %}>
+                    Apenas Concluídos
+                </label>
+            </div>
             <div class="control">
                 <button type="submit" class="button is-info">Aplicar Filtros</button>
             </div>
             <div class="control">
-                {# O link para limpar filtros deve apontar para a URL da sua view sem parâmetros de query #}
                 <a href="{% url 'main:anotacoes' id_user=user.id %}" class="button is-light">Limpar Filtros</a>
             </div>
         </div>
@@ -183,7 +186,7 @@
                         <div class="content">
                             <p style="color: white;">{{ anotacao_item.anotacao|truncatewords:20|linebreaksbr }}</p>
                             <br>
-                            {% if not anotacao_item.completo and anotacao_item.prazo_final %} {# Verifica se prazo_final existe #}
+                            {% if not anotacao_item.completo and anotacao_item.prazo_final %}
                                 <p class="is-size-7">
                                     <span class="icon-text">
                                         <span class="icon"><i class="fas fa-hourglass-half"></i></span>
@@ -207,7 +210,7 @@
                                         <strong style="color:white;">Concluído</strong>
                                     </span>
                                 </p>
-                            {% else %} {# Este caso provavelmente é para quando não tem prazo_final, mas também não está completo #}
+                            {% else %}
                                 <p class="is-size-7 has-text-warning">
                                      <span class="icon-text">
                                         <span class="icon has-text-warning">
