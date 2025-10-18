@@ -55,6 +55,9 @@ class Todo(models.Model):
         default=timezone.now,
         help_text=f'eg. {str(timezone.now().date())}'
     )
+    is_active = models.BooleanField(
+        default=True
+    )
     created_at = models.DateTimeField(("Data de Criação"), auto_now_add=True)
     updated_at = models.DateTimeField(("Data de Atualização"), auto_now=True)
 

@@ -12,33 +12,33 @@ def anotacoes(request):
 
 class AnotacaoListView(ListView):
     model = Anotacao
-    template_name = "anotacoes/anotacao_list.html"
+    template_name = "anotacao_list.html"
     context_object_name = "anotacoes"
 
 
 class AnotacaoDetailView(DetailView):
     model = Anotacao
-    template_name = "anotacoes/anotacao_detail.html"
+    template_name = "anotacao_detail.html"
     context_object_name = "anotacao"
 
 
 class AnotacaoCreateView(CreateView):
     model = Anotacao
     form_class = AnotacaoForm
-    template_name = "anotacoes/anotacao_form.html"
+    template_name = "anotacao_form.html"
     success_url = reverse_lazy("anotacao_list")
 
 
 class AnotacaoUpdateView(UpdateView):
     model = Anotacao
     form_class = AnotacaoForm
-    template_name = "anotacoes/anotacao_form.html"
+    template_name = "anotacao_form.html"
     success_url = reverse_lazy("anotacao_list")
 
 
 class AnotacaoDeleteView(DeleteView):
     model = Anotacao
-    template_name = "anotacoes/anotacao_confirm_delete.html"
+    template_name = "anotacao_confirm_delete.html"
     success_url = reverse_lazy("anotacao_list")
 
 
@@ -48,31 +48,31 @@ class AnotacaoDeleteView(DeleteView):
 
 class ConfigListView(ListView):
     model = Config
-    template_name = "anotacoes/config_list.html"
+    template_name = "config_list.html"
     context_object_name = "configs"
 
 
 class ConfigDetailView(DetailView):
     model = Config
-    template_name = "anotacoes/config_detail.html"
+    template_name = "config_detail.html"
     context_object_name = "config"
 
 
 class ConfigCreateView(CreateView):
     model = Config
     form_class = ConfigForm
-    template_name = "anotacoes/config_form.html"
+    template_name = "config_form.html"
     success_url = reverse_lazy("config_list")
 
 
 class ConfigUpdateView(UpdateView):
     model = Config
     form_class = ConfigForm
-    template_name = "anotacoes/config_form.html"
+    template_name = "config_form.html"
     success_url = reverse_lazy("config_list")
 
 
 class ConfigDeleteView(DeleteView):
     model = Config
-    template_name = "anotacoes/config_confirm_delete.html"
+    template_name = "config_confirm_delete.html"
     success_url = reverse_lazy("config_list")

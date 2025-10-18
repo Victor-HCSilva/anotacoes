@@ -31,7 +31,11 @@ images:
 	@docker images
 
 migrate:
-	echo "Executando migrações"
-	python3 manage.py makemigrations
-	python3 manage.py migrate
-	clear
+	@echo "Executando migrações"
+	@python3 manage.py makemigrations
+	@python3 manage.py migrate
+	@clear
+
+save_all:
+	@git add .
+	@git commit

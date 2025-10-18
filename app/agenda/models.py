@@ -87,6 +87,9 @@ class AgendaModel(models.Model):
         default=PRIORIDADES[0],
     )
     dia_do_evento = models.DateTimeField("Data do evento", default=timezone.now)
+    is_active = models.BooleanField(
+        default=True
+    )
     created_at = models.DateTimeField("Data de Criação", auto_now_add=True)
     updated_at = models.DateTimeField("Data de Atualização", auto_now=True)
 

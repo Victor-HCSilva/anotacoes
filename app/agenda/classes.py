@@ -155,7 +155,8 @@ class DeleteOrEditEvent():
         }
 
         if self.request.method == "POST":
-            evento.delete()
+            evento.is_active = False
+            evento.save()
             return redirect("agenda:eventos", id_user=id_user)
 
         return render(self.request, "delete_event.html", context)

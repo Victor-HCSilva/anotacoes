@@ -13,7 +13,7 @@ def anotacoes(request, id_user):
         return redirect('main:login')
 
     # Começamos com todos os objetos Todo para o usuário
-    todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
+    todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user), is_active=True)
 
     # Aplicar filtros com base nos query parameters
     tag_filter = request.GET.get('tag')
@@ -23,17 +23,17 @@ def anotacoes(request, id_user):
     titulo_filter = request.GET.get('titulo')
 
     if tag_filter:
-        todos = todos.filter(tag=tag_filter)
+        todos = todos.filter(tag=tag_filter, is_active=True)
     if prioridade_filter:
-        todos = todos.filter(prioridade=prioridade_filter)
+        todos = todos.filter(prioridade=prioridade_filter, is_active=True)
     if favorito_filter:
         # 'true' ou 'false' vindo da URL. Convertemos para booleano
-        todos = todos.filter(favorito=(favorito_filter.lower() == 'true'))
+        todos = todos.filter(favorito=(favorito_filter.lower() == 'true'), is_active=True)
     if completo_filter:
-        todos = todos.filter(completo=(completo_filter.lower() == 'true'))
+        todos = todos.filter(completo=(completo_filter.lower() == 'true'), is_active=True)
     if titulo_filter: # <--- NOVO: Aplica o filtro de título
         # Usamos icontains para busca case-insensitive e parcial
-        todos = todos.filter(titulo__icontains=titulo_filter)
+        todos = todos.filter(titulo__icontains=titulo_filter, is_active=True)
     prazos = {} # Parece que 'prazos' não está sendo usado, mas mantive por consistência
 
     for tarefa in todos:
@@ -139,20 +139,20 @@ def editar(request, id_user, id_anotacao):
 
 @login_required()
 def remover(request, id_user, id_anotacao):
-    todo = get_object_or_404(Todo, id=id_anotacao)
-    user = get_object_or_404(User, id=id_user)
-
-    form = TodoForm(instance=todo)
-
     #Consertar com o login_required
     if request.user.id != id_user:
         return redirect('main:login')
 
+    todo = get_object_or_404(Todo, id=id_anotacao)
+    user = get_object_or_404(User, id=id_user)
+    form = TodoForm(instance=todo)
+
     if request.method == "POST":
-        todo.delete()
+        todo.is_active = False
+        todo.save()
         return redirect("main:anotacoes", id_user=id_user)
     else:
-        print(form.errors)
+        print("Erros no formulario: ", form.errors)
         return render (request, "delete.html", {"user":user, "tarefa":todo})
 
 
