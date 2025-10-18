@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 #Login
 LOGIN_URL = 'main/login'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'create/account'
 
 
 # Quick-start development settings - unsuitable for production
@@ -20,7 +20,8 @@ LOGOUT_REDIRECT_URL = 'login'
 SECRET_KEY = "django-insecure-dy90dm-xu35#=r+-3aeiw5stm3@5+21x*53#z*g4$*23-h%6xz"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-print(DEBUG)
+
+# print(DEBUG)
 
 ALLOWED_HOSTS = ["*"]
 
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     "app.init",
     "app.main",
     "app.agenda",
+    #"app.anotacoes",
 ]
 
 MIDDLEWARE = [

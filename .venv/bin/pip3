@@ -1,4 +1,4 @@
-#!/home/victor/main/manager_projects/.venv/bin/python3
+#!/home/victor/main/anotacoes/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

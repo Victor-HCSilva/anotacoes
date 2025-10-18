@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block extra_css %}
+<style>
+#possui-conta-button {
+    color: black;
+    border: 1px solid cyan;
+    margin-top: 2px;
+    border-radius: 10px;
+    padding: 6px 12px;
+    display: inline-block;
+    text-decoration: none;
+}
+#possui-conta-button: hover {
+    color: cyan !important;
+    background: gray;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
   <h2 class="title is-3">Criar Conta</h2>
@@ -34,19 +52,7 @@
           Criar Conta
         </button>
       </div>
-        <a
-            style="
-                color: white !important;
-                border: 1px solid cyan;
-                margin-top: 2px;
-                border-radius: 10px;
-                padding: 6px 12px;
-                display: inline-block;
-                text-decoration: none;
-            "
-            href="{% url 'main:login' %}">
-            Já possuo conta
-        </a>
+        <a id="possui-conta-button" href="{% url 'main:login' %}"> Já possuo conta </a>
     </div>
   </form>
 </div>

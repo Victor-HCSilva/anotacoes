@@ -20,6 +20,25 @@
         background-color: #f14668;
         color: white;
     }
+    /* Estilo para os checkboxes e labels */
+    .filter-checkbox-group label {
+        margin-left: 0.5em;
+        margin-right: 1em; /* Espaço entre os checkboxes */
+        color: white; /* Garante que o texto do label seja branco */
+    }
+    .filter-checkbox-group input[type="checkbox"] {
+        vertical-align: middle;
+    }
+    .filter-section {
+        background-color: #2f2f2f; /* Fundo escuro para a seção de filtros */
+        padding: 1.5rem;
+        border-radius: 6px;
+        margin-bottom: 2rem;
+        border: 1px solid #4a4a4a;
+    }
+    .filter-section .field:not(:last-child) {
+        margin-bottom: 1rem;
+    }
 </style>
 {% endblock extra_css %}
 
@@ -28,7 +47,7 @@
 <div class="level mb-5">
     <div class="level-left">
         <div class="level-item">
-            <h1 style="color: rgb(200,200,200)" class="title is-2"> {# A cor já vem do base.html #}
+            <h1 style="color: rgb(200,200,200)" class="title is-2">
                 <span style="color: rgb(200,200,200)" class="icon mr-3"><i class="fas fa-clipboard-list fa-lg"></i></span>
                 Minhas Anotações
             </h1>
@@ -41,14 +60,94 @@
                     <span class="icon"><i class="fas fa-plus"></i></span>
                     <span>Nova Anotação</span>
                 </a>
-        <a class="button is-link" href="{% url 'agenda:agenda' id_user=user.id %}">
-            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-            <span>Agenda</span>
-        </a>
+                <a class="button is-link" href="{% url 'agenda:agenda' id_user=user.id %}">
+                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                    <span>Agenda</span>
+                </a>
             </div>
         </div>
     </div>
 </div>
+
+{# Seção de Filtros #}
+<div class="filter-section mb-5">
+    <h3 class="title is-4 has-text-light mb-4">Filtros</h3>
+    <form action="" method="get">
+        <div class="field is-grouped is-grouped-multiline">
+            {# Filtro por Tag #}
+            <div class="control">
+                <div class="field has-addons">
+                    <div class="control">
+                        <span class="button is-static is-dark">Tag</span>
+                    </div>
+                    <div class="control is-expanded">
+                        <div class="select is-fullwidth">
+                            <select name="tag">
+                                <option value="">Todas</option>
+                                {% for tag_value, tag_display in all_tags %}
+                                    <option value="{{ tag_value }}" {% if selected_tag == tag_value %}selected{% endif %}>
+                                        {{ tag_display }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Filtro por Prioridade #}
+            <div class="control">
+                <div class="field has-addons">
+                    <div class="control">
+                        <span class="button is-static is-dark">Prioridade</span>
+                    </div>
+                    <div class="control is-expanded">
+                        <div class="select is-fullwidth">
+                            <select name="prioridade">
+                                <option value="">Todas</option>
+                                {% for prioridade_value, prioridade_display in all_prioridades %}
+                                    {# Note que prioridade_display é o valor '1', '2', '3' e prioridade_value é 'Mínima', 'Mediana', 'Máxima' #}
+                                    <option value="{{ prioridade_display }}" {% if selected_prioridade == prioridade_display %}selected{% endif %}>
+                                        {{ prioridade_value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Checkboxes para Favorito e Completo #}
+            <div class="control">
+                <div class="field is-grouped filter-checkbox-group">
+                    <div class="control">
+                        <label class="checkbox has-text-white">
+                            <input type="checkbox" name="favorito" value="true" {% if selected_favorito == 'true' %}checked{% endif %}>
+                            Apenas Favoritos
+                        </label>
+                    </div>
+                    <div class="control">
+                        <label class="checkbox has-text-white">
+                            <input type="checkbox" name="completo" value="true" {% if selected_completo == 'true' %}checked{% endif %}>
+                            Apenas Concluídos
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-grouped mt-4">
+            <div class="control">
+                <button type="submit" class="button is-info">Aplicar Filtros</button>
+            </div>
+            <div class="control">
+                {# O link para limpar filtros deve apontar para a URL da sua view sem parâmetros de query #}
+                <a href="{% url 'main:anotacoes' id_user=user.id %}" class="button is-light">Limpar Filtros</a>
+            </div>
+        </div>
+    </form>
+</div>
+{# Fim da Seção de Filtros #}
 
 {% if anotacoes %}
     <div class="columns is-multiline">
@@ -65,46 +164,39 @@
                                         <i class="fas fa-pen-alt has-text-grey-light"></i>
                                     {% endif %}
                                 </span>
-                                {# O texto do título agora herdará o branco nítido do .card-header-title #}
                                 <span style="color: white;">{{ anotacao_item.titulo }}</span>
                             </span>
                         </p>
                         <div class="card-header-icon">
-                            {% with prioridade=anotacao_item.prioridade|lower %}
+                            {% with prioridade_value=anotacao_item.prioridade %}
                                 <span class="tag
-                                    {% if prioridade == 'máxima' %}is-danger
-                                    {% elif prioridade == 'mediana' %}is-warning
-                                    {% elif prioridade == 'mínima' %}is-success
+                                    {% if prioridade_value == '3' %}is-danger
+                                    {% elif prioridade_value == '2' %}is-warning
+                                    {% elif prioridade_value == '1' %}is-success
                                     {% else %}is-dark{% endif %}">
-                                    {{ anotacao_item.prioridade }}
+                                    {{ anotacao_item.get_prioridade_display }}
                                 </span>
                             {% endwith %}
                         </div>
                     </header>
                     <div class="card-content">
                         <div class="content">
-                            {# Este texto agora terá a cor do body (branco suave) #}
                             <p style="color: white;">{{ anotacao_item.anotacao|truncatewords:20|linebreaksbr }}</p>
                             <br>
-                            {% if not anotacao_item.completo and anotacao_item.prazo %}
-                                {# Este texto secundário usará a cor de 'help' (cinza claro) #}
+                            {% if not anotacao_item.completo and anotacao_item.prazo_final %} {# Verifica se prazo_final existe #}
                                 <p class="is-size-7">
                                     <span class="icon-text">
                                         <span class="icon"><i class="fas fa-hourglass-half"></i></span>
                                         <strong style="color: {{ anotacao_item.color|default:'inherit' }};">
-
-                                            {% if anotacao_item.prazo <= 0 %}
+                                            {% if anotacao_item.prazo == "Sem prazo definido" %}
+                                                {{ anotacao_item.prazo }}
+                                            {% elif anotacao_item.prazo <= 0 %}
                                                 Esta tarefa passou do prazo!
                                             {% elif anotacao_item.prazo == 1  %}
-
                                                 Prazo restante: {{ anotacao_item.prazo }} dia
-
                                             {% elif anotacao_item.prazo > 1 %}
                                                 Prazo restante: {{ anotacao_item.prazo }} dias
                                             {% endif %}
-
-
-
                                         </strong>
                                     </span>
                                 </p>
@@ -115,13 +207,13 @@
                                         <strong style="color:white;">Concluído</strong>
                                     </span>
                                 </p>
-                            {% else %}
-                                <p class="is-size-7 has-text-success">
+                            {% else %} {# Este caso provavelmente é para quando não tem prazo_final, mas também não está completo #}
+                                <p class="is-size-7 has-text-warning">
                                      <span class="icon-text">
-                                    <span class="icon has-text-warning">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                      </span>
-                                        <strong style="color:white;">Passou do prazo</strong>
+                                        <span class="icon has-text-warning">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </span>
+                                        <strong style="color:white;">Sem prazo definido</strong>
                                     </span>
                                 </p>
                             {% endif %}

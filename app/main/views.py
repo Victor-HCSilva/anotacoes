@@ -12,36 +12,65 @@ def anotacoes(request, id_user):
     if request.user.id != id_user:
         return redirect('main:login')
 
+    # Começamos com todos os objetos Todo para o usuário
     todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user))
-    prazos = {}
+
+    # Aplicar filtros com base nos query parameters
+    tag_filter = request.GET.get('tag')
+    prioridade_filter = request.GET.get('prioridade')
+    favorito_filter = request.GET.get('favorito')
+    completo_filter = request.GET.get('completo')
+
+    if tag_filter:
+        todos = todos.filter(tag=tag_filter)
+    if prioridade_filter:
+        todos = todos.filter(prioridade=prioridade_filter)
+    if favorito_filter:
+        # 'true' ou 'false' vindo da URL. Convertemos para booleano
+        todos = todos.filter(favorito=(favorito_filter.lower() == 'true'))
+    if completo_filter:
+        todos = todos.filter(completo=(completo_filter.lower() == 'true'))
+
+    prazos = {} # Parece que 'prazos' não está sendo usado, mas mantive por consistência
 
     for tarefa in todos:
-
-        #Atribuição de dias restantes
+        # Atribuição de dias restantes
         if tarefa.prazo_inicial and tarefa.prazo_final:
             tarefa.prazo = utils.get_time_diff_days(tarefa.prazo_inicial, tarefa.prazo_final)
         else:
             tarefa.prazo = "Sem prazo definido"
 
-        #Mensagens
-        if int(tarefa.prazo) <0:
-            tarefa.message = "Passou do prazo: "
-        else:
-            tarefa.message = "Dias restantes: "
+        # Mensagens
+        try:
+            if int(tarefa.prazo) < 0:
+                tarefa.message = "Passou do prazo: "
+            else:
+                tarefa.message = "Dias restantes: "
+        except ValueError: # Caso tarefa.prazo seja "Sem prazo definido"
+            tarefa.message = ""
 
-        #Cores das menssagens
-        if int(tarefa.prazo) >= 7:
-            tarefa.color = "green"
-        elif int(tarefa.prazo) >= 3 and int(tarefa.prazo) < 7:
-            tarefa.color = "orange"
-        elif int(tarefa.prazo) >= 1 and int(tarefa.prazo) <=2:
-            tarefa.color = "red"
-        else:
-            tarefa.color = "violet"
+        # Cores das mensagens
+        try:
+            if int(tarefa.prazo) >= 7:
+                tarefa.color = "green"
+            elif 3 <= int(tarefa.prazo) < 7:
+                tarefa.color = "orange"
+            elif 1 <= int(tarefa.prazo) <= 2:
+                tarefa.color = "red"
+            else:
+                tarefa.color = "violet"
+        except ValueError:
+            tarefa.color = "gray" # Cor padrão para "Sem prazo definido"
 
     context = {
-        "anotacoes":todos,
-        "prazos":prazos,
+        "anotacoes": todos,
+        "prazos": prazos,
+        "all_tags": Todo.TAGS, # Envia todas as tags para o template
+        "all_prioridades": Todo.PRIORIDADES, # Envia todas as prioridades para o template
+        "selected_tag": tag_filter, # Envia o filtro aplicado para o template
+        "selected_prioridade": prioridade_filter,
+        "selected_favorito": favorito_filter,
+        "selected_completo": completo_filter,
     }
 
     return render(request, "anotacoes.html", context)
