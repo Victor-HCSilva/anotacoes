@@ -44,20 +44,24 @@
             background-color: #363636;
         }
         .logout-button {
-            background: none !important;
-            border: none !important;
-            padding: 0 !important;
+            background: gray !important;
             color: hsl(0, 0%, 86%); /* has-text-grey-light */
             cursor: pointer;
-            text-align: left;
+            text-align: center;
             height: auto;
             font-size: 1em;
             display: block;
             width: 100%;
+            border-radius: 5px;
         }
         .logout-button:hover {
             color: hsl(0, 0%, 100%) !important; /* has-text-white */
             background-color: transparent !important;
+        }
+        #user{
+            color: white !important;
+            padding: 0px;
+            border-radius: 6px;
         }
         .white-link{
             color: rgb(200,200,200) !important;
@@ -111,13 +115,13 @@
         <div id="mobileMenu" class="navbar-menu">
             <div class="navbar-start">
                 {% if user.is_authenticated %}
-                    <div style="color: black important!;" class="navbar-item has-text-grey-light name">Olá, {{ user.username }}</div>
                     <div class="navbar-item">
                         <form method="post" action="{% url 'main:logout' %}">
                             {% csrf_token %}
-                            <button type="submit" class="white-link logout-button button-exit">Sair</button>
+                            <button type="submit" class="logout-button">Sair</button>
                         </form>
                     </div>
+                    <div id="user" style="color: black important!;" class="navbar-item has-text-grey-light name">Olá, {{ user.username }}</div>
                     <hr class="navbar-divider">
                     <ul class="menu-list">
                         <li><a class="white-link"  href="{% url 'main:sobre' %}">Sobre</a></li>
@@ -149,16 +153,16 @@
                 </a>
             </div>
             <aside class="menu p-4">
-                <p class="menu-label">Usuário</p>
                 <ul class="menu-list">
                     {% if user.is_authenticated %}
-                        <li><div class="p-2 has-text-grey-light">Olá, {{ user.username }}</div></li>
-                        <li>
-                            <form method="post" action="{% url 'main:logout' %}">
-                                {% csrf_token %}
-                                <button type="submit" class="logout-button" style="padding: 0.5em 0.75em;">Sair</button>
-                            </form>
-                        </li>
+                    <p class="menu-label">Usuário</p>
+                    <div id="user" style="color: black important!;" class="navbar-item has-text-grey-light name">Olá, {{ user.username }}</div>
+                    <div class="navbar-item">
+                        <form method="post" action="{% url 'main:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-button">Sair</button>
+                        </form>
+                    </div>
 
                         </ul>
                         <p class="menu-label">Opções</p>
@@ -169,7 +173,10 @@
                             <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
                             <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
                         </ul>
+                    {% else %}
+                    <p class="menu-label">Crie uma conta ou realize login</p>
                     {% endif %}
+
             </aside>
         </div>
 
