@@ -173,9 +173,9 @@
                         <div class="card-header-icon">
                             {% with prioridade_value=anotacao_item.prioridade %}
                                 <span class="tag
-                                    {% if prioridade_value == '3' %}is-danger
-                                    {% elif prioridade_value == '2' %}is-warning
-                                    {% elif prioridade_value == '1' %}is-success
+                                    {% if prioridade_value == 'Máxima' %}is-danger
+                                    {% elif prioridade_value == 'Mediana' %}is-warning
+                                    {% elif prioridade_value == 'Mínima' %}is-success
                                     {% else %}is-dark{% endif %}">
                                     {{ anotacao_item.get_prioridade_display }}
                                 </span>

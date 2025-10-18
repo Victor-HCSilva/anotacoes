@@ -11,6 +11,7 @@ class Todo(models.Model):
         ("Importante.","Importante"),
         ("Tarefa.","Tarefa"),
         ("Lembrete.","Lembrete"),
+        ("Avulso","Avulso"),
         ("Outro","Outro"),
     ]
     PRIORIDADES = [
@@ -23,7 +24,8 @@ class Todo(models.Model):
             on_delete=models.CASCADE
     )
     titulo = models.CharField(
-        max_length=200
+        max_length=200,
+        default="Sem titulo"
     )
     favorito = models.BooleanField(
         default=False
@@ -37,12 +39,13 @@ class Todo(models.Model):
     )
     prioridade = models.CharField(
         choices=PRIORIDADES,
-        max_length=10
+        max_length=10,
+        default="1"
     )
-    created_at = models.DateTimeField(("Data de Criação"), auto_now_add=True)
-    updated_at = models.DateTimeField(("Data de Atualização"), auto_now=True)
     tag = models.CharField(
-        choices=TAGS, max_length=13
+        choices=TAGS,
+        max_length=13,
+        default=("Avulso","Avulso")
     )
     prazo_inicial = models.DateField(
         default=timezone.now,
@@ -52,6 +55,8 @@ class Todo(models.Model):
         default=timezone.now,
         help_text=f'eg. {str(timezone.now().date())}'
     )
+    created_at = models.DateTimeField(("Data de Criação"), auto_now_add=True)
+    updated_at = models.DateTimeField(("Data de Atualização"), auto_now=True)
 
     def __str__(self):
         return (f"Titulo: {self.titulo}")
