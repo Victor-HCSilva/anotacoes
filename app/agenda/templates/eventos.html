@@ -10,54 +10,95 @@
         <div class="level">
             <div class="level-left">
                 <div class="level-item">
-                    <!-- O título já estava com 'has-text-white', perfeito para o tema dark -->
                     <h1 class="title is-1 has-text-white">Eventos marcados</h1>
                 </div>
             </div>
             <div class="level-right">
                 <div class="level-item">
-                    <!-- Um botão 'is-link' funciona bem, mas 'is-light' pode dar mais contraste -->
                     <a class="button is-link is-light" href="{% url 'agenda:agenda' id_user=user.id  %}">
-                        Ver minha Agenda
+                        <span class="icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                        <span>Ver minha Agenda</span>
                     </a>
                 </div>
             </div>
         </div>
 
         {% for evento in eventos %}
-            <!-- CARD ADAPTADO PARA O TEMA DARK -->
-            <!-- 1. Adicionamos 'has-background-dark' para o fundo do card -->
             <div class="card mb-5 has-background-dark">
                 <header class="card-header">
-                    <!-- 2. Adicionamos 'has-text-light' para o texto do título ser claro -->
-                    <p class="card-header-title has-text-light">
+                    {# Título principal do evento dentro do card, mais proeminente #}
+                    <p class="card-header-title is-size-4 has-text-primary"> {# is-size-4 para maior, has-text-primary para destaque #}
                         {{ evento.titulo }}
                     </p>
                     <span class="card-header-icon">
-                        <!-- A tag 'is-info' já contrasta bem, não precisa mudar -->
+                        {# Data como uma tag, mas podemos deixá-la aqui ou movê-la #}
                         <span class="tag is-info">{{ evento.dia_do_evento|date:"d/m/Y" }}</span>
                     </span>
                 </header>
 
                 <div class="card-content">
-                    <!-- 3. Adicionamos 'has-text-light' aqui para todo o conteúdo do card ficar claro -->
                     <div class="content has-text-light">
-                       <p>Selecione uma das opções abaixo para gerenciar este evento.</p>
+                        {# Aqui vamos criar uma estrutura mais organizada para as informações #}
+                        <div class="columns is-mobile is-vcentered">
+                            <div class="column is-narrow">
+                                <span class="icon-text has-text-warning"> {# Exemplo de ícone e texto para a data #}
+                                    <span class="icon">
+                                        <i class="far fa-calendar-alt"></i> {# Ícone de calendário diferente #}
+                                    </span>
+                                    <span>Data:</span>
+                                </span>
+                            </div>
+                            <div class="column">
+                                <p class="is-size-6 has-text-weight-bold">{{ evento.dia_do_evento|date:"d/m/Y" }}</p>
+                            </div>
+                        </div>
+
+                        {# Adicionar uma linha para separar as instruções das informações #}
+                        <hr class="has-background-grey-darker">
+
+                        <p class="has-text-grey-light is-size-7 mt-3">
+                            <span class="icon-text">
+                                <span class="icon has-text-grey-light">
+                                    <i class="fas fa-hand-pointer"></i>
+                                </span>
+                                <span>Selecione uma das opções abaixo para gerenciar este evento:</span>
+                            </span>
+                        </p>
                     </div>
                 </div>
 
                 <footer class="card-footer">
-                    <!-- Os links com 'has-text-*' coloridos já se destacam no fundo escuro -->
-                    <a href="{% url 'agenda:detalhe_sobre_evento' id_user=user.id id_evento=evento.id %}" class="card-footer-item has-text-info">Detalhes</a>
-                    <a href="{% url 'agenda:editar_evento' id_user=user.id id_event=evento.id %}" class="card-footer-item has-text-warning">Editar</a>
-                    <a href="{% url 'agenda:deletar_evento' id_user=user.id id_event=evento.id %}" class="card-footer-item has-text-danger">Deletar</a>
+                    <a href="{% url 'agenda:detalhe_sobre_evento' id_user=user.id id_evento=evento.id %}" class="card-footer-item has-text-info">
+                        <span class="icon is-small">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                        <span>Detalhes</span>
+                    </a>
+                    <a href="{% url 'agenda:editar_evento' id_user=user.id id_event=evento.id %}" class="card-footer-item has-text-warning">
+                        <span class="icon is-small">
+                            <i class="fas fa-edit"></i>
+                        </span>
+                        <span>Editar</span>
+                    </a>
+                    <a href="{% url 'agenda:deletar_evento' id_user=user.id id_event=evento.id %}" class="card-footer-item has-text-danger">
+                        <span class="icon is-small">
+                            <i class="fas fa-trash-alt"></i>
+                        </span>
+                        <span>Deletar</span>
+                    </a>
                 </footer>
             </div>
 
         {% empty %}
-            <!-- O 'notification is-warning' tem um fundo amarelo claro, que se destaca bem no tema dark. -->
             <div class="notification is-warning">
-                <p class="has-text-centered">Você ainda não possui eventos marcados na sua agenda.</p>
+                <p class="has-text-centered">
+                    <span class="icon mr-2">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </span>
+                    Você ainda não possui eventos marcados na sua agenda.
+                </p>
             </div>
         {% endfor %}
 
