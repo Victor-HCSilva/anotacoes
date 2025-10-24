@@ -9,6 +9,7 @@ from . import utils
 
 @login_required
 def anotacoes(request, id_user):
+    label = None
     if request.user.id != id_user:
         return redirect('main:login')
 
@@ -25,7 +26,13 @@ def anotacoes(request, id_user):
     if tag_filter:
         todos = todos.filter(tag=tag_filter, is_active=True)
     if prioridade_filter:
-        todos = todos.filter(prioridade=prioridade_filter, is_active=True)
+        if prioridade_filter == '1':
+            label = "Mínima"
+        elif prioridade_filter == '2':
+            label = "Mediana"
+        elif prioridade_filter == '3':
+           label =  "Máxima"
+        todos = todos.filter(prioridade=label, is_active=True)
     if favorito_filter:
         # 'true' ou 'false' vindo da URL. Convertemos para booleano
         todos = todos.filter(favorito=(favorito_filter.lower() == 'true'), is_active=True)
@@ -34,10 +41,11 @@ def anotacoes(request, id_user):
     if titulo_filter: # <--- NOVO: Aplica o filtro de título
         # Usamos icontains para busca case-insensitive e parcial
         todos = todos.filter(titulo__icontains=titulo_filter, is_active=True)
+
+    # print(f"Filtros: {tag_filter} | {prioridade_filter} {label } | {completo_filter} | {titulo_filter}")
     prazos = {} # Parece que 'prazos' não está sendo usado, mas mantive por consistência
 
     for tarefa in todos:
-        # Atribuição de dias restantes
         if tarefa.prazo_inicial and tarefa.prazo_final:
             tarefa.prazo = utils.get_time_diff_days(tarefa.prazo_inicial, tarefa.prazo_final)
         else:
