@@ -1,16 +1,14 @@
-
 {% extends "base.html" %}
 {% load static %}
 
 {% block title %}Detalhes: {{ evento.titulo|default:"Evento" }}{% endblock title %}
 
-
 {% block content %}
 <section class="section">
-    <div class="container">
+    <div class="container"> {# Removido is-max-desktop para permitir maior largura #}
 
-        <!-- 1. Cabeçalho com Título e Botão de Voltar, usando o componente 'level' -->
-        <div class="level mb-5">
+        <!-- Cabeçalho com Título da Página e Botões de Navegação -->
+        <div class="level mb-6">
             <div class="level-left">
                 <div class="level-item">
                     <h1 class="title is-3 has-text-white">Detalhes do Evento</h1>
@@ -18,89 +16,95 @@
             </div>
             <div class="level-right">
                 <div class="level-item">
-                    <a class="button is-ghost" href="{% url 'agenda:agenda' id_user=user.id  %}">
-                        <span class="icon"><i class="fas fa-arrow-left"></i></span>
-                        <span>Voltar para a Agenda</span>
+                    <a class="button is-text has-text-white" href="{% url 'agenda:agenda' id_user=user.id  %}">
+                        <span class="icon mr-2"><i class="fas fa-calendar-alt"></i></span>
+                        <span>Minha Agenda</span>
                     </a>
-                    <a class="button is-ghost" href="{% url 'agenda:eventos' id_user=user.id  %}">
-                        <span class="icon"><i class="fas fa-arrow-left"></i></span>
-                        <span>Eventos</span>
+                </div>
+                <div class="level-item">
+                    <a class="button is-text has-text-white" href="{% url 'agenda:eventos' id_user=user.id  %}">
+                        <span class="icon mr-2"><i class="fas fa-list-ul"></i></span>
+                        <span>Todos os Eventos</span>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Usando um 'box' para agrupar as informações do evento -->
-        <div class="box has-background-black-bis">
-            {% if evento %}
-                <!-- 3. Cabeçalho dentro do box para o título e data do evento -->
-                <h2 class="title is-4 has-text-light">{{ evento.titulo }}</h2>
-                <p class="subtitle is-6 has-text-grey-light">
+        {% if evento %}
+            <!-- Box principal para os detalhes do evento - Agora bem maior com p-6 e mb-6 -->
+            <div class="box has-background-black-bis p-6 mb-6">
+
+                <!-- Título do Evento (o mais importante) -->
+                <h2 class="title is-2 has-text-primary mb-4">{{ evento.titulo }}</h2> {# Mais espaçamento abaixo #}
+
+                <!-- Data e Hora (logo abaixo do título, em destaque) -->
+                <p class="subtitle is-4 has-text-info mb-5"> {# Aumentado para is-4 #}
                     <span class="icon-text">
-                        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                        <!-- Formatando a data E a hora para a tela de detalhes -->
+                        <span class="icon mr-2"><i class="fas fa-clock"></i></span>
                         <span>{{ evento.dia_do_evento|date:"d/m/Y \à\s H:i" }}</span>
                     </span>
                 </p>
 
-                <hr class="has-background-grey-darker">
+                <hr class="has-background-grey-darker my-5"> {# Separador #}
 
-                <!-- 4. Corpo do box com os detalhes de forma estruturada -->
-                <div class="content has-text-light">
-                    <p>
-                        <strong class="has-text-grey-light">Descrição:</strong><br>
-                        {{ evento.descricao|linebreaksbr }} {# O filtro 'linebreaksbr' respeita as quebras de linha #}
-                    </p>
-                    <p>
-                        <strong class="has-text-grey-light">Tipo de Evento:</strong>
-                        <span class="tag is-primary ml-2">{{ evento.tipo_de_evento }}</span>
-                    </p>
-                    <p>
+                <!-- Descrição do Evento -->
+                <div class="content has-text-light mb-6">
+                    <p class="is-size-4 has-text-weight-bold has-text-grey-light mb-3">Descrição:</p> {# Aumentado para is-4 #}
+                    <p class="is-size-5">{{ evento.descricao|linebreaksbr }}</p> {# Mantido is-5, mas com mais espaço #}
+                </div>
 
+                <hr class="has-background-grey-darker my-5"> {# Separador #}
 
+                <!-- Tipo de Evento -->
+                <div class="mb-6"> {# Bloco de Tipo de Evento com mais margem #}
+                    <p class="is-size-4 has-text-weight-bold has-text-grey-light mb-3">Tipo de Evento:</p> {# Aumentado para is-4 #}
+                    <span class="tag is-primary is-large is-light">{{ evento.tipo_de_evento }}</span> {# is-large e is-light para contraste #}
+                </div>
+
+                <!-- Importância -->
+                <div class="mb-4"> {# Bloco de Importância com mais margem #}
+                    <p class="is-size-4 has-text-weight-bold has-text-grey-light mb-3">Importância:</p> {# Aumentado para is-4 #}
                     {% if evento.importancia == "1" %}
                         <span class="icon-text has-text-info">
-                          <span class="icon">
-                            <i class="fas fa-info-circle"></i>
+                          <span class="icon is-large mr-2"> {# Ícone is-large #}
+                            <i class="fas fa-lightbulb"></i>
                           </span>
-                          <span>Mínima importância</span>
+                          <span class="is-size-4">Mínima</span> {# Aumentado para is-4 #}
                         </span>
                     {% elif evento.importancia == "2" %}
                         <span class="icon-text has-text-warning">
-                          <span class="icon">
-                            <i class="fas fa-exclamation-triangle"></i>
+                          <span class="icon is-large mr-2">
+                            <i class="fas fa-exclamation-circle"></i>
                           </span>
-                          <span>Média importância</span>
+                          <span class="is-size-4">Média</span>
                         </span>
                     {% elif evento.importancia == "3" %}
                         <span class="icon-text has-text-danger">
-                          <span class="icon">
-                            <i class="fas fa-ban"></i>
+                          <span class="icon is-large mr-2">
+                            <i class="fas fa-fire-alt"></i>
                           </span>
-                          <span>Máxima importância</span>
+                          <span class="is-size-4">Máxima</span>
                         </span>
-
                     {% endif %}
-
-
-
-                    </p>
                 </div>
 
-            {% else %}
-                <!-- 5. Mensagem de erro aprimorada com o componente 'notification' -->
-                <div class="notification is-danger">
-                    <p class="has-text-centered">Ocorreu um erro ao carregar os detalhes do evento. Por favor, tente novamente.</p>
-                </div>
-            {% endif %}
-        </div>
+            </div> {# Fim do box principal #}
+
+        {% else %}
+            <!-- Mensagem de erro aprimorada com o componente 'notification' -->
+            <div class="notification is-danger is-light">
+                <button class="delete"></button>
+                <p class="has-text-centered">
+                    <span class="icon mr-2"><i class="fas fa-exclamation-triangle"></i></span>
+                    Ocorreu um erro ao carregar os detalhes do evento. Por favor, tente novamente.
+                </p>
+            </div>
+        {% endif %}
 
     </div>
 </section>
 {% endblock content %}
 
-
 {% block extra_js %}
-    <!-- Adicione o Font Awesome para os ícones funcionarem -->
-    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
+    <!-- Font Awesome já deve estar no base.html ou incluído como sugerido -->
 {% endblock extra_js %}
