@@ -6,10 +6,15 @@
 {% block extra_css %}
 <style>
 
+    .titulo{
+        color: white !important;
+        /*text-decoration: underline;*/
+        text-shadow: 1px 1px 2px {{ cor_de_destaque }};
+    }
     .time-message{
-        /*background-color: #d6deee !important;
-        border: 1px solid white;*/
-        border-radius: 6px;
+        background-color: #111111 !important;
+        /*border: 1px solid white;*/
+        border-radius: 6px !important;
         padding: 2px;
         text-transform: uppercase; /* tudo em maiúsculas */
     }
@@ -175,7 +180,7 @@
                                         <i class="fas fa-pen-alt has-text-grey-light"></i>
                                     {% endif %}
                                 </span>
-                                <span style="color: white;">{{ anotacao_item.titulo }}</span>
+                                <span class="titulo">{{ anotacao_item.titulo }}</span>
                             </span>
                         </p>
                         <div class="card-header-icon">

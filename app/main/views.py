@@ -11,6 +11,7 @@ from app.main.utils import (
     clean_dict,
     adjust_boolean_fields,
 )
+from app.agenda.models import Colors
 
 @login_required
 def anotacoes(request, id_user):
@@ -33,7 +34,10 @@ def anotacoes(request, id_user):
             )
     )
 
-    print(f"Todas: ", [item.prazo_dias for item in todos])
+    cor_obj = Colors.objects.filter(user=filters['user']).first()
+    cor_de_destaque = cor_obj.cor_de_destaque if cor_obj else "#3273dc" #
+
+    #print(f"Todas: ", [item.prazo_dias for item in todos])
     context = {
         "anotacoes": todos,
         "all_tags": Todo.TAGS, # Envia todas as tags para o template
@@ -43,6 +47,7 @@ def anotacoes(request, id_user):
         "selected_favorito": filters.get('favorito'),
         "selected_completo": filters.get('completo'),
         "selected_titulo": filters.get('titulo'),
+        "cor_de_destaque": cor_de_destaque
     }
 
     return render(request, "anotacoes.html", context)

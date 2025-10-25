@@ -80,13 +80,13 @@ class Todo(models.Model):
             case None:
                 return "gray"
             case x if x >= 7:
-                return "green"
+                return "#00ff00"
             case x if 3 <= x < 7:
                 return "orange"
             case x if 1 <= x <= 2:
-                return "#b81414"
-            case _:
                 return "violet"
+            case _:
+                return "#b82b14"
 
     def __str__(self):
         return (f"Titulo: {self.titulo}")
