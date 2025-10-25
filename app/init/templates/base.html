@@ -124,11 +124,12 @@
                     <div id="user" style="color: black important!;" class="navbar-item has-text-grey-light name">Olá, {{ user.username }}</div>
                     <hr class="navbar-divider">
                     <ul class="menu-list">
-                        <li><a class="white-link"  href="{% url 'main:sobre' %}">Sobre</a></li>
-                        <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
-                        <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
-                        <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
-                        <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:configs' id_user=user.id %}" class="navbar-item">⚙️</a></li>
+                            <li><a class="white-link" href="{% url 'main:sobre' %}">𐦂𖨆𐀪𖠋 Sobre</a></li>
+                            <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">⾕ Início</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">🗒 Agenda</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">✧₊⁺ Eventos</a></li>
+                            <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">⟟ Tarefas</a></li>
                     </ul>
                 {% endif %}
             </div>
@@ -167,11 +168,12 @@
                         </ul>
                         <p class="menu-label">Opções</p>
                         <ul class="menu-list">
-                            <li><a class="white-link" href="{% url 'main:sobre' %}">Sobre</a></li>
-                            <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">Início</a></li>
-                            <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">Agenda</a></li>
-                            <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">Eventos</a></li>
-                            <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">Tarefas</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:configs' id_user=user.id %}" class="navbar-item">⚙️</a></li>
+                            <li><a class="white-link" href="{% url 'main:sobre' %}">𐦂𖨆𐀪𖠋 Sobre</a></li>
+                            <li><a class="white-link" href="{% url 'main:welcome' id_user=user.id %}" class="navbar-item">⾕ Início</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:agenda' id_user=user.id %}" class="navbar-item">🗒 Agenda</a></li>
+                            <li><a class="white-link" href="{% url 'agenda:eventos' id_user=user.id %}" class="navbar-item">✧₊⁺ Eventos</a></li>
+                            <li><a class="white-link" href="{% url 'main:anotacoes' id_user=user.id %}" class="navbar-item">⟟ Tarefas</a></li>
                         </ul>
                     {% else %}
                     <p class="menu-label">Crie uma conta ou realize login</p>
