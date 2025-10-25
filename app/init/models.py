@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import date
+from app.main.utils import get_time_diff_days
 
 class Todo(models.Model):
     TAGS = [
@@ -61,6 +62,27 @@ class Todo(models.Model):
     created_at = models.DateTimeField(("Data de Criação"), auto_now_add=True)
     updated_at = models.DateTimeField(("Data de Atualização"), auto_now=True)
 
+
+    @property
+    def prazo_dias(self):
+        if self.prazo_inicial and self.prazo_final:
+            return get_time_diff_days(self.prazo_inicial, self.prazo_final)
+        return None
+
+    @property
+    def color(self):
+        match self.prazo_dias:
+            case None:
+                return "gray"
+            case x if x >= 7:
+                return "green"
+            case x if 3 <= x < 7:
+                return "orange"
+            case x if 1 <= x <= 2:
+                return "red"
+            case _:
+                return "violet"
+
     def __str__(self):
         return (f"Titulo: {self.titulo}")
 
@@ -86,7 +108,6 @@ class Image(models.Model):
         related_name="imagem"
     )
     observacao = models.CharField(max_length=1000, default="Sem observação")
-
 
     def __str__(self):
         return f"Titulo: {self.titulo} - {self.data_de_criacao}"

@@ -5,53 +5,42 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from app.init.forms import TodoForm, ImageForm
-from . import utils
+from app.main.utils import (
+    get_time_diff_days,
+    get_label,
+    clean_dict,
+    adjust_boolean_fields,
+)
 
 @login_required
 def anotacoes(request, id_user):
-    label = None
     if request.user.id != id_user:
         return redirect('main:login')
 
-    # Começamos com todos os objetos Todo para o usuário
-    todos = Todo.objects.filter(user=get_object_or_404(User, id=id_user), is_active=True)
+    filters = {
+        "tag": request.GET.get('tag', None),
+        "prioridade": get_label(request.GET.get('prioridade', "")),
+        "favorito": request.GET.get('favorito', ""),
+        "completo": request.GET.get('completo', ""),
+        "titulo": request.GET.get('titulo', ""),
+        "user": get_object_or_404(User,id=id_user),
+        "is_active": True,
+    }
 
-    # Aplicar filtros com base nos query parameters
-    tag_filter = request.GET.get('tag')
-    prioridade_filter = request.GET.get('prioridade')
-    favorito_filter = request.GET.get('favorito')
-    completo_filter = request.GET.get('completo')
-    titulo_filter = request.GET.get('titulo')
+    todos = Todo.objects.filter(
+         **adjust_boolean_fields(
+                clean_dict(filters)
+            )
+    )
 
-    if tag_filter:
-        todos = todos.filter(tag=tag_filter, is_active=True)
-    if prioridade_filter:
-        if prioridade_filter == '1':
-            label = "Mínima"
-        elif prioridade_filter == '2':
-            label = "Mediana"
-        elif prioridade_filter == '3':
-           label =  "Máxima"
-        todos = todos.filter(prioridade=label, is_active=True)
-    if favorito_filter:
-        # 'true' ou 'false' vindo da URL. Convertemos para booleano
-        todos = todos.filter(favorito=(favorito_filter.lower() == 'true'), is_active=True)
-    if completo_filter:
-        todos = todos.filter(completo=(completo_filter.lower() == 'true'), is_active=True)
-    if titulo_filter: # <--- NOVO: Aplica o filtro de título
-        # Usamos icontains para busca case-insensitive e parcial
-        todos = todos.filter(titulo__icontains=titulo_filter, is_active=True)
-
-    # print(f"Filtros: {tag_filter} | {prioridade_filter} {label } | {completo_filter} | {titulo_filter}")
-    prazos = {} # Parece que 'prazos' não está sendo usado, mas mantive por consistência
+    prazos = {}
 
     for tarefa in todos:
         if tarefa.prazo_inicial and tarefa.prazo_final:
-            tarefa.prazo = utils.get_time_diff_days(tarefa.prazo_inicial, tarefa.prazo_final)
+            tarefa.prazo = get_time_diff_days(tarefa.prazo_inicial, tarefa.prazo_final)
         else:
             tarefa.prazo = "Sem prazo definido"
 
-        # Mensagens
         try:
             if int(tarefa.prazo) < 0:
                 tarefa.message = "Passou do prazo: "
@@ -60,29 +49,16 @@ def anotacoes(request, id_user):
         except ValueError: # Caso tarefa.prazo seja "Sem prazo definido"
             tarefa.message = ""
 
-        # Cores das mensagens
-        try:
-            if int(tarefa.prazo) >= 7:
-                tarefa.color = "green"
-            elif 3 <= int(tarefa.prazo) < 7:
-                tarefa.color = "orange"
-            elif 1 <= int(tarefa.prazo) <= 2:
-                tarefa.color = "red"
-            else:
-                tarefa.color = "violet"
-        except ValueError:
-            tarefa.color = "gray" # Cor padrão para "Sem prazo definido"
-
     context = {
         "anotacoes": todos,
         "prazos": prazos,
         "all_tags": Todo.TAGS, # Envia todas as tags para o template
         "all_prioridades": Todo.PRIORIDADES, # Envia todas as prioridades para o template
-        "selected_tag": tag_filter, # Envia o filtro aplicado para o template
-        "selected_prioridade": prioridade_filter,
-        "selected_favorito": favorito_filter,
-        "selected_completo": completo_filter,
-        "selected_titulo": titulo_filter,
+        "selected_tag": filters.get('tag'), # Envia o filtro aplicado para o template
+        "selected_prioridade": filters.get('prioridade'),
+        "selected_favorito": filters.get('favorito'),
+        "selected_completo": filters.get('completo'),
+        "selected_titulo": filters.get('titulo'),
     }
 
     return render(request, "anotacoes.html", context)
