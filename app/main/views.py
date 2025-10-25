@@ -33,25 +33,9 @@ def anotacoes(request, id_user):
             )
     )
 
-    prazos = {}
-
-    for tarefa in todos:
-        if tarefa.prazo_inicial and tarefa.prazo_final:
-            tarefa.prazo = get_time_diff_days(tarefa.prazo_inicial, tarefa.prazo_final)
-        else:
-            tarefa.prazo = "Sem prazo definido"
-
-        try:
-            if int(tarefa.prazo) < 0:
-                tarefa.message = "Passou do prazo: "
-            else:
-                tarefa.message = "Dias restantes: "
-        except ValueError: # Caso tarefa.prazo seja "Sem prazo definido"
-            tarefa.message = ""
-
+    print(f"Todas: ", [item.prazo_dias for item in todos])
     context = {
         "anotacoes": todos,
-        "prazos": prazos,
         "all_tags": Todo.TAGS, # Envia todas as tags para o template
         "all_prioridades": Todo.PRIORIDADES, # Envia todas as prioridades para o template
         "selected_tag": filters.get('tag'), # Envia o filtro aplicado para o template

@@ -5,6 +5,14 @@
 
 {% block extra_css %}
 <style>
+
+    .time-message{
+        /*background-color: #d6deee !important;
+        border: 1px solid white;*/
+        border-radius: 6px;
+        padding: 2px;
+        text-transform: uppercase; /* tudo em maiúsculas */
+    }
     .card-anotacao {
         background-color: #2f2f2f;
         border: 1px solid #4a4a4a;
@@ -186,37 +194,29 @@
                         <div class="content">
                             <p style="color: white;">{{ anotacao_item.anotacao|truncatewords:20|linebreaksbr }}</p>
                             <br>
-                            {% if not anotacao_item.completo and anotacao_item.prazo_final %}
+                            {% if not anotacao_item.completo %}
                                 <p class="is-size-7">
                                     <span class="icon-text">
                                         <span class="icon"><i class="fas fa-hourglass-half"></i></span>
-                                        <strong style="color: {{ anotacao_item.color|default:'inherit' }};">
-                                            {% if anotacao_item.prazo == "Sem prazo definido" %}
-                                                {{ anotacao_item.prazo }}
-                                            {% elif anotacao_item.prazo <= 0 %}
-                                                Esta tarefa passou do prazo!
-                                            {% elif anotacao_item.prazo == 1  %}
-                                                Prazo restante: {{ anotacao_item.prazo }} dia
-                                            {% elif anotacao_item.prazo > 1 %}
-                                                Prazo restante: {{ anotacao_item.prazo }} dias
+                                        <strong class="time-message" style="color: {{ anotacao_item.color }};">
+                                            {% if anotacao_item.prazo_dias is not None %}
+                                                {{ anotacao_item.message }}
+                                                {% if anotacao_item.prazo_dias == 1 %}
+                                                    {{ anotacao_item.prazo_dias }} dia
+                                                {% else %}
+                                                    {{ anotacao_item.prazo_dias }} dias
+                                                {% endif %}
+                                            {% else %}
+                                                Sem prazo definido
                                             {% endif %}
                                         </strong>
                                     </span>
                                 </p>
-                            {% elif anotacao_item.completo %}
+                            {% else %}
                                 <p class="is-size-7 has-text-success">
                                      <span class="icon-text">
                                         <span class="icon"><i class="fas fa-check-circle"></i></span>
                                         <strong style="color:white;">Concluído</strong>
-                                    </span>
-                                </p>
-                            {% else %}
-                                <p class="is-size-7 has-text-warning">
-                                     <span class="icon-text">
-                                        <span class="icon has-text-warning">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                        </span>
-                                        <strong style="color:white;">Sem prazo definido</strong>
                                     </span>
                                 </p>
                             {% endif %}

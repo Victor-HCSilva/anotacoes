@@ -69,6 +69,11 @@ class Todo(models.Model):
             return get_time_diff_days(self.prazo_inicial, self.prazo_final)
         return None
 
+    def message(self):
+        if self.prazo_dias is None:
+            return ""
+        return "Passou do prazo: " if self.prazo_dias <= 0 else "Dias restantes: "
+
     @property
     def color(self):
         match self.prazo_dias:
@@ -79,7 +84,7 @@ class Todo(models.Model):
             case x if 3 <= x < 7:
                 return "orange"
             case x if 1 <= x <= 2:
-                return "red"
+                return "#b81414"
             case _:
                 return "violet"
 

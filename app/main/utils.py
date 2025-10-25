@@ -31,3 +31,24 @@ def adjust_boolean_fields(filters: dict):
             else:
                 filters[k] = False
     return filters
+
+
+if __name__ == "__main__":
+    import os
+    import django
+    import sys
+
+# 1️⃣ Adicione a raiz do projeto ao sys.path (para garantir que 'core' seja encontrado)
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # ./
+
+# 2️⃣ Defina a variável de ambiente do settings
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
+
+# 3️⃣ Inicialize o Django
+    django.setup()
+
+    from app.init.models import Todo
+
+    s = Todo.objects.all()
+    for i in s:
+        print(i.message(), i.prazo_dias, i.prazo_inicial, i.prazo_final)
