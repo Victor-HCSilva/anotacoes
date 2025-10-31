@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "app.init",
     "app.main",
     "app.agenda",
-    #"app.anotacoes",
+    "app.checklist",
 ]
 
 MIDDLEWARE = [

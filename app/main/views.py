@@ -12,42 +12,61 @@ from app.main.utils import (
     adjust_boolean_fields,
 )
 from app.agenda.models import Colors
+from django.utils.dateparse import parse_date
+
 
 @login_required
 def anotacoes(request, id_user):
+    # Garantir que o usuário só veja suas próprias anotações
     if request.user.id != id_user:
         return redirect('main:login')
 
+    # Obter datas de filtro, com defaults seguros
+    prazo_inicial = request.GET.get('prazo_inicial', '2025-01-01')
+    prazo_final = request.GET.get('prazo_final', '2026-01-01')
+
+    # Converter para objetos de data (evita falhas no filtro)
+    prazo_inicial = parse_date(prazo_inicial)
+    prazo_final = parse_date(prazo_final)
+
+    # Montagem dos filtros dinâmicos
     filters = {
-        "tag": request.GET.get('tag', None),
-        "prioridade": get_label(request.GET.get('prioridade', "")),
-        "favorito": request.GET.get('favorito', ""),
-        "completo": request.GET.get('completo', ""),
-        "titulo": request.GET.get('titulo', ""),
-        "user": get_object_or_404(User,id=id_user),
+        "tag": request.GET.get('tag') or None,
+        "prioridade": get_label(request.GET.get('prioridade', '')),
+        "favorito": request.GET.get('favorito', ''),
+        "completo": request.GET.get('completo', ''),
+        "titulo__icontains": request.GET.get('titulo', ''),
+        "user": get_object_or_404(User, id=id_user),
         "is_active": True,
     }
 
+    # Apenas adiciona o range se as datas forem válidas
+    if prazo_inicial and prazo_final:
+        filters["prazo_inicial__range"] = [prazo_inicial, prazo_final]
+
+    # Limpa campos vazios e ajusta booleanos
     todos = Todo.objects.filter(
-         **adjust_boolean_fields(
-                clean_dict(filters)
-            )
-    )
+        **adjust_boolean_fields(
+            clean_dict(filters)
+        )
+    ).order_by("-id")
 
-    cor_obj = Colors.objects.filter(user=filters['user']).first()
-    cor_de_destaque = cor_obj.cor_de_destaque if cor_obj else "#3273dc" #
+    # Cor de destaque personalizada do usuário
+    cor_obj = Colors.objects.filter(user=filters["user"]).first()
+    cor_de_destaque = cor_obj.cor_de_destaque if cor_obj else "#3273dc"
 
-    #print(f"Todas: ", [item.prazo_dias for item in todos])
     context = {
         "anotacoes": todos,
-        "all_tags": Todo.TAGS, # Envia todas as tags para o template
-        "all_prioridades": Todo.PRIORIDADES, # Envia todas as prioridades para o template
-        "selected_tag": filters.get('tag'), # Envia o filtro aplicado para o template
+        "all_tags": Todo.TAGS,
+        "all_prioridades": Todo.PRIORIDADES,
+        "selected_tag": filters.get('tag'),
         "selected_prioridade": filters.get('prioridade'),
         "selected_favorito": filters.get('favorito'),
         "selected_completo": filters.get('completo'),
-        "selected_titulo": filters.get('titulo'),
-        "cor_de_destaque": cor_de_destaque
+        "selected_titulo": request.GET.get('titulo', ''),
+        "cor_de_destaque": cor_de_destaque,
+        "prazo_inicial": prazo_inicial,
+        "prazo_final": prazo_final,
     }
 
     return render(request, "anotacoes.html", context)
@@ -84,13 +103,13 @@ def show(request, id_user,id_anotacao):
 
 @login_required()
 def editar(request, id_user, id_anotacao):
-    todo = get_object_or_404(Todo, id=id_anotacao)
-    user = get_object_or_404(User, id=id_user)
-    form = TodoForm(instance=todo)
-
     #Consertar com o login_required
     if request.user.id != id_user:
         return redirect('main:login')
+
+    todo = get_object_or_404(Todo, id=id_anotacao)
+    user = get_object_or_404(User, id=id_user)
+    form = TodoForm(instance=todo)
 
     if request.method == "POST":
         form = TodoForm(request.POST, instance=todo)
@@ -102,17 +121,15 @@ def editar(request, id_user, id_anotacao):
         print(form.errors)
 
     context = {
-        "user":user,
-        "form":form,
-        "tarefa":todo
-
+        "user": user,
+        "form": form,
+        "tarefa": todo,
     }
     return render (request, "editar.html", context)
 
 
 @login_required()
 def remover(request, id_user, id_anotacao):
-    #Consertar com o login_required
     if request.user.id != id_user:
         return redirect('main:login')
 
@@ -164,7 +181,6 @@ def editar_descricao(request, id_user, id_imagem, id_anotacao):
         image = form.save(commit=False)
         image.user = todo
         image.save()
-
         return redirect("main:show", id_user=id_user, id_anotacao=id_anotacao)
     else:
         print(form.errors)

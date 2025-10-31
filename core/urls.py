@@ -9,7 +9,7 @@ urlpatterns = [
     path('', include("app.init.urls")),
     path('main/', include("app.main.urls")),
     path('agenda/', include("app.agenda.urls")),
-    #path('text-anotacoes/', include("app.anotacoes.urls")),
+    path('checklist/', include("app.checklist.urls")),
 ]
 
 

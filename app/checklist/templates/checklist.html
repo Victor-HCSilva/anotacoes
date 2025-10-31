@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Suas Anotações{% endblock title %}
+
+{%block content %}
+<h2>Novo Título</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ titulo_form.as_p }}
+  <button type="submit" name="submit_titulo">Salvar Título</button>
+</form>
+
+<h2>Novo Item</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ itens_form.as_p }}
+  <button type="submit" name="submit_itens">Salvar Item</button>
+</form>
+
+<hr>
+<h3>Títulos cadastrados:</h3>
+<ul>
+  {% for titulo in titulos %}
+    <li>{{ titulo.nome }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Itens cadastrados:</h3>
+<ul>
+  {% for item in itens %}
+    <li>{{ item.nome }} ({{ item.titulo }})</li>
+  {% endfor %}
+</ul>
+{% endblock content %}
+
+{% block extra_js %}
+{% endblock extra_js %}
